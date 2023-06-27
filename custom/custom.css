@@ -1,0 +1,81 @@
+/* This is the custom css file that TE always load */
+/* Make sure to backup-restore this file after any update of TerraExplorer Fusion version */
+
+
+/* Main properties: colors, font size, paddings */
+/* :root {
+    --textColor: #141414;
+    --textInverseColor: #ffffff;
+    --Color1: #F5A744;
+    --Color2: #F5A744;
+    --Color3: #A86EE5;
+    --Color4: #4d4d4d;
+    --Color5: #eeeeee;
+    --Color6: #999999;
+    --errorColor: #a40000;
+    --warningColor :#a45a00;
+    --fontSizeSmall: 11pt;
+    --fontSizeMedium: 12pt;
+    --fontSizeLarge: 14pt;
+    --fontSizeHeader: 18pt;
+    --distanceFromScreenEdge: 5px; 
+    --borderRadiusLarge: 10px; 
+
+    --textColor: #141414;
+    --textInverseColor: #ffffff;
+    --primaryColor: #2f22f0;
+    --errorColor: #a40000;
+    --warningColor :#a45a00;
+  } 
+  */
+ 
+/* Hide main toolbox buttons */
+/*
+#QueryBtn {display: none;}  
+#LayersBtn {display: none;}
+#AnalysisBtn {display: none;}
+#NavigateBtn {display: none;}
+#SearchBtn {display: none;}
+#SettingsBtn {display: none;}
+*/
+
+/* Layers table */
+/*
+#layersButtonState0 {display: inline;}
+#layersButtonState1 {display: none;}
+#layersButtonState2 {display: inline;}
+#layersButtonState2 {background-size: 1px;}
+*/
+
+/* Hide Analysis tabs and tools */
+/* 
+#analysisTabButton0 {display: none;}
+#analysisTabButton1 {display: none;}
+#analysisTabButton2 {display: none;}
+.bottomBlueBar {display: none;}
+
+#distanceBtn {display:none}
+#areaBtn{display:none}
+#volumeBtn {display:none}
+#profileBtn{display:none}
+#viewshedBtn{display:none}
+#swipeCompareBtn{display:none}
+*/
+
+/* Hide elements from the Settings page */
+/*
+ .settingsGraphics{display:none} 
+ .settingsView{display:none} 
+ .settingsEffects{display:none} 
+ .settingsShadow{display:none} 
+ .settingsAbout{display:none} 
+
+ #settingsTabButton1{display:none} 
+ .settingsOpenInTED{display:none} 
+ .settingsLoadFromSGS{display:none} 
+ .settingsRecentProjects{display:none} 
+*/
+
+  
+  
+  

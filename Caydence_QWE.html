@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script src="./js/lang/lang.js"></script>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="shortcut icon" href="#">
+    <script src="./js/jquery-3.6.0.min.js"></script>
+    <script src="./js/jquery-ui.min.js"></script>
+    <script src="./js/context-menu.min.js"></script> 
+    <script src="./js/datatables.min.js"></script>
+    <script type="text/javascript" src="./js/services.js"></script>     
+    <script type="text/javascript" src="./js/application.js"></script>     
+    <script type="text/javascript" src="./js/startPage.js"></script>     
+    <script type="text/javascript" src="./js/toolbox.js"></script>     
+    <script type="text/javascript" src="./js/projectTree.js"></script>     
+    <script type="text/javascript" src="./js/navigate.js"></script>     
+    <script type="text/javascript" src="./js/analysis.js"></script>     
+    <script type="text/javascript" src="./js/search.js"></script>     
+    <script type="text/javascript" src="./js/settings.js"></script>     
+    <script src="TerraExplorerApp.Emscripten.js"></script>
+    <script src="TEApiWrapper_for_emscripten.js"></script>    
+
+    <link href="./css/TE.css" rel="StyleSheet">
+    <link href="./custom/custom.css" rel="StyleSheet">
+    <link href="./css/jquery-ui.css" rel="StyleSheet">
+    <link href="./css/context-menu.min.css" rel="StyleSheet">
+    <link href="./css/datatables.min.css" rel="StyleSheet">    
+
+    <style type="text/css">undefined</style>
+
+    <style>
+        .frame          { width: 1200px; height: 250px; margin-left: 100px; }
+        .frame-label    { width: 1180px; height: 20px; margin-left: 100px; margin-top: 10px; background: grey; color: black; padding-left: 20px; }
+        .yellow         { border: 2px solid yellow; }
+        .blue           { border: 2px solid blue; }
+        .green          { border: 2px solid green; }
+        .red            { border: 2px solid red; }
+    </style>
+
+    <script>
+        "use strict";
+
+        window.onerror = function (msg, url, lineNo, columnNo, error) { 
+//DIAGNOSTIC//            alert(
+//DIAGNOSTIC//                "javascript error"            + "\n\n" + 
+//DIAGNOSTIC//                "message : "  + msg           + "\n\n" + 
+//DIAGNOSTIC//                "url : "      + url           + "\n\n" +
+//DIAGNOSTIC//                "line : "     + lineNo        + "\n\n" + 
+//DIAGNOSTIC//                "column : "   + columnNo      + "\n\n" + 
+//DIAGNOSTIC//                "error : "    + error
+//DIAGNOSTIC//            );
+            console.error(
+                "javascript error;"       + "\n\n" + 
+                "Message : "  + msg       + "\n\n" + 
+                "url     : "  + url       + "\n\n" + 
+                "Line    : "  + lineNo    + "\n\n" + 
+                "Column  : "  + columnNo  + "\n\n" + 
+                "Error   : "  + error
+            );
+        }
+        console.log("QWE main: started...");
+        //var SGWorld=null;
+
+        $(document).ready(function(){
+            console.log("QWE main@ready: started    " + '-'.repeat(80));
+            ////loadTEF(true);    //  In sample code this was run from a user button click, and would load the iframe. Now included here in the following line
+            $("#tef").attr('src', './TE.html?project=https://eu-cluster-1.nmcaydence.com/sg/sse/projects/503687');
+            $("#tef-2").attr('src', './TE.html?project=https://eu-cluster-1.nmcaydence.com/sg/sse&config=projects&catalogid=503687');
+            $("#tef-3").attr('src', 'https://cloud.skylineglobe.com/sg/TEF80B2/TEW.html?project=https://eu-cluster-1.nmcaydence.com/sg/sse/projects/503687');
+///            $("#tef-4").attr('src', "./TE.html?project=https://cloud.skylineglobe.com/sg/Skyline/projects/TEW_Demo_Project.726595");
+
+            $("#tef-1-label").text($("#tef").attr('src'));
+            $("#tef-2-label").text($("#tef-2").attr('src'));
+            $("#tef-3-label").text($("#tef-3").attr('src'));
+///            $("#tef-4-label").text($("#tef-4").attr('src'));
+
+            let SGWorld = document.getElementById('tef').contentWindow.SGWorld;    // console.log('QWE main@ready: SGWorld1 ', SGWorld1);
+//            let SGWorld2 = document.getElementById('tef-2').contentWindow.SGWorld; console.log('QWE main@ready: SGWorld2 ', SGWorld2);
+//            let SGWorld3 = document.getElementById('tef-3').contentWindow.SGWorld; console.log('QWE main@ready: SGWorld3 ', SGWorld3);
+            //let SGWorld4 = document.getElementById('tef-4').contentWindow.SGWorld; console.log('QWE main@ready: SGWorld4 ', SGWorld4);
+            //let SGWorld5 = document.getElementById('tef-5').contentWindow.SGWorld; console.log('QWE main@ready: SGWorld5 ', SGWorld5);
+            //let SGWorld6 = document.getElementById('tef-6').contentWindow.SGWorld; console.log('QWE main@ready: SGWorld6 ', SGWorld6);
+
+            //if (SGWorld) {
+            //    console.log("QWE main@ready: SGWorld found");
+            //} else {
+            //    console.log("QWE main@ready: SGWorld not found");
+            //}
+
+            if (typeof SGWorld != 'undefined') {
+                console.log('QWE main@ready: SGWorld is defined, ' + typeof SGWorld + ", ", SGWorld);
+            } else {
+                console.log('QWE main@ready: SGWorld is undefined');
+            }
+
+            if (typeof TerraExplorer !== 'undefined') {
+                console.log('QWE main@ready: TerraExplorer is defined, ' + typeof TerraExplorer);
+            } else {
+                console.log('QWE main@ready: TerraExplorer is undefined');
+            }
+            
+            if (typeof ICommand74 !== 'undefined') {
+                console.log('QWE main@ready: ICommand74 is defined, ' + typeof ICommand74);
+            } else {
+                console.log('QWE main@ready: ICommand74 is undefined');
+            }
+        });
+        
+        ////$(() => { let TEF  = document.getElementById('tef'  ); console.log("QWE (): TEF  is " + TEF); });
+        ////$(() => { let TEF2 = document.getElementById('tef-2'); console.log("QWE (): TEF2 is " + TEF2); });
+        ////$(() => { let TEF3 = document.getElementById('tef-3'); console.log("QWE (): TEF3 is " + TEF3); });
+        ////$(() => { let TEF4 = document.getElementById('tef-4'); console.log("QWE (): TEF4 is " + TEF4); });
+
+        function onTEFInit(event) {
+            console.log("QWE main@onTEFInit: called    " + '-'.repeat(80));
+            ////  SGWorld = document.getElementById('tef').contentWindow.SGWorld;
+        }
+        
+        function onTEFProjectLoaded(event) {
+            console.log("QWE main@onTEFProjectLoaded: called    " + '-'.repeat(80));
+            ////  var position= SGWorld.Creator.CreatePosition (-97.0, 38.0, 100, 0 , -70,0,500);
+            ////  SGWorld.Navigate.FlyTo (position);
+        }
+
+        function loadTEF(GUI){
+            console.log("QWE main@loadTEF: called    " + '-'.repeat(80));
+        ////    var guiURL = (GUI)?"":"&script=sampleCustomButtons.js&css=sampleCustomButtons";
+        ////    //$("#tef").attr('src',  "../te.html?project=https://cloud.skylineglobe.com/sg/Skyline/projects/TEW_Demo_Project.726595"+guiURL);
+        ////    $("#tef").attr('src',  "./te.html?project=https://eu-cluster-1.nmcaydence.com/sg/sse/projects/503687");
+        ////    $("#tef2").attr('src',  "./te.html?project=https://cloud.skylineglobe.com/SG/demos/projects/Mexico_Beach_Emergency_Response");
+        }        
+    </script>    
+</head>
+
+<body scroll="no" style="overflow: hidden" oncontextmenu="return false;">
+    <!-- Loading -->
+    <div id="loadingDiv" class="loadingAnim" style="display: none;">
+        <video class="loadingVideo" autoplay="autoplay" loop="" muted="">
+            <source src="images/img/loading.mp4" type="video/mp4">
+        </video>
+        <span id="loadingText" class="s18">Loading project ...</span>
+    </div>
+
+    <!-- Start Page -->
+    <div id="startPageDiv" class="startPageDiv" style="display:none"></div>
+
+    <!-- application - 3D Window -->
+    <div id="applicationDiv" class="ThreeDView" style="">
+            <!--
+            <canvas id="canvas" width="1211" height="899" tabindex="1" oncontextmenu="event.preventDefault()" style="cursor: url(&quot;data:application/cur;base64,AAACAAEAICAAABAAEADoAgAAFgAAACgAAAAgAAAAQAAAAAEABAAAAAAAgAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABEREQAAAAAAAAAAAAAAAAEREREAAAAAAAAAAAAAAAAREREREAAAAAAAAAAAAAABERERERAAAAAAAAAAAAAAARERERERAAAAAAAAAAAAABEREREREQAAAAAAAAAAAAERAREREREAAAAAAAAAAAABEAEREREREAAAAAAAAAAAAAABERERARAAAAAAAAAAAAAAEQEQEQEQAAAAAAAAAAAAABEBEBEAEAAAAAAAAAAAAAEQARARAAAAAAAAAAAAAAABEAEQEQAAAAAAAAAAAAAAAAABEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD////////////////////////////////////////////4B///+Af///AH///gA///wAP//8AB//+AAf//AAH//wAA//+QAP//4AD//+AA///ABf//wAf//+QP///+f////////////////////////////////////////////w==&quot;), auto;">
+            </canvas>
+            -->
+<!--            
+            <div id="toolbox" class="toolbox boxShadowLarge">
+                <div class="toolbox-button" onclick="toolbox.selectTool(0,false); " id="QueryBtn" title="Query">
+                    <img class="toolbox-icon" src="./images/toolboxIcons/select.png">
+                </div>
+                <div class="toolbox-button" onclick="toolbox.selectTool(1,false); " id="LayersBtn" title="Layers">
+                    <img class="toolbox-icon" src="./images/toolboxIcons/layers.png">
+                </div>
+                <div class="toolbox-button" onclick="toolbox.selectTool(2,false); " id="AnalysisBtn" title="Analysis Tools">
+                    <img class="toolbox-icon" src="./images/toolboxIcons/analysis.png">
+                </div>
+                <div class="toolbox-button" onclick="toolbox.selectTool(3,false); " id="NavigateBtn" title="Navigation Tools">
+                    <img class="toolbox-icon" src="./images/toolboxIcons/navigate.png">
+                </div>
+                <div class="toolbox-button" onclick="toolbox.selectTool(4,false); " id="SearchBtn" title="Search">
+                    <img class="toolbox-icon" src="./images/toolboxIcons/search.png">
+                </div>
+                <div class="toolbox-button" onclick="toolbox.selectTool(5,false); " id="SettingsBtn" title="Settings">
+                    <img class="toolbox-icon" src="./images/toolboxIcons/settings.png">
+                </div>
+                <div id="errorCounter" class="toolboxErrorCounter link s9inv" onclick="application.showErrorLog()" title="See errors" style="display:none;">
+                </div>
+            </div>
+            <div id="frameRateDiv" class="frameRate" style="display:none">
+                <label for="pin" class="btns s9inv">Frame Rate:
+                </label>
+                <label for="pin" class="btns s9inv" id="FR">60
+                </label>
+            </div>
+            <div id="logoID" class="logo">
+            </div>
+            <div id="centerSignID" class="centerSign" style="display:none">
+                <img src="images/icons/centerSign.png">
+
+
+        </div>
+
+        <div id="navigationButtons" class="navigationBarDiv boxShadowLarge" style="">
+            <img src="images/icons/north.png" id="navigationButtonNorth" class="navigationButton link" onclick="navigate.north()" style="transform: rotate(359.998deg);">
+            <img src="images/icons/ZoomIn.png" class="navigationButton link" onclick="navigate.zoom(1)">
+            <img src="images/icons/ZoomOut.png" class="navigationButton link" onclick="navigate.zoom(-1)">
+        </div>
+
+        <div id="statusBarID" class="statusBar" style="">
+            <table class="s9 statusBarTable"> <tbody><tr>
+                <td> <div class="bufferingDivWrapper"><div id="bufferingID" class="bufferingDiv" style="width: 100px;"></div></div></td>
+                <td> <span id="LatID" class="s9 link2" onclick="search.inputFromCord(false)">51.25242 N</span> </td>
+                <td> <span id="LonID" class="s9 link2" onclick="search.inputFromCord(false)">-1.49561 W</span> </td>
+                <td id="MGRStD" class="MGRS link2" style="display: none;" onclick="search.inputFromCord(true)"> <span id="MGRSID" class="s9"></span> </td>
+                <td> <span id="altitudeID" class="s9">371.98 Km AGL</span> </td>
+                <td> <span id="copyrightID" class="s9 copyright"></span></td>
+            </tr> </tbody></table>
+        </div>
+
+        <div id="messageBar" class="messageBar boxShadowLarge" style="display: none; max-height: 10px; opacity: 0; height: 10px;">
+            <span id="messageBarText" class="s9"></span>
+        </div>
+    </div>
+
+
+
+    <div id="errorDiv" class="errorDiv" style="display:none">
+        <img src="images/img/ErrorLoading.png" class="errorImg">
+        <span id="errorTextID" class="s18 i18n"></span>  
+    </div> 
+   
+    <div id="LoginTitleDivID" class="LoginTitleDiv" onclick="application.showLogin()" style="">
+        <span class="s14w link LoginTitle" id="logInTitle" title="Click to log in to a SkylineGlobe Server"></span> 
+    </div>
+
+
+    <div id="dialogConfirmContainer" class="messagePopup dialogConfirmDiv s12" style="display:none;">
+        <div id="dialogConfirmContent" class="messagePopupContent dialogConfirmContent"></div>
+    </div>      <div id="toolTip" class="toolTip boxShadowSmall" style="display:none">            <span id="toolTipText" class="s9"></span>        </div><div role="log" aria-live="assertive" aria-relevant="additions" class="ui-helper-hidden-accessible"></div> 
+    <div id="layersPanelDiv" class="panel  boxShadowLarge" style="display: none; opacity: 0;"> 
+        <div id="layersMain" class="w100 h100">
+            <table class="tabsTable panelHeader s9"> 
+                <tbody><tr>
+                    <td>
+                        <button id="layersButtonState0" class="tab tabSelected  " onclick="projectTree.setTreeState(0)">Navigate</button>
+                        <button id="layersButtonState1" class="tab   " onclick="projectTree.setTreeState(1)">Layers</button>
+                        <button id="layersButtonState2" class="tab   " onclick="projectTree.setTreeState(2)">Project Tree</button>
+                    </td>
+                    <td class="link " colspan="2" align="right" onclick="toolbox.closeAllTools('layers',true)"><img src="images/icons/close.png"></td>
+                </tr>
+            </tbody></table>
+            <table class="panelTable s9">             
+                <tbody><tr>
+                    <td id="projectTreeTD" valign="top" colspan="2">
+                        <div id="projectTreeWrapperID" class="projectTreeWrapper">
+                            <div id="projectTree" class="projectTree"></div>
+                            <div id="myDataTitle" class="w100 s9 myDataTitle spacerAbove" style="display:none">
+                                <table class="w100"><tbody><tr>
+                                    <td><span>My Data </span></td>
+                                    <td align="right"><span id="deleteAllID" class="link2" onclick="projectTree.DeleteMyData()"></span></td>
+                                </tr></tbody></table>
+                            </div>
+                            <div id="myDataTree" class="projectTree "></div>
+                        </div>
+                    </td>
+                </tr>
+            </tbody></table>
+            <div class="bottomBlueBar ">
+                <div id="layersAddLayerDiv" style="display:none">
+                   <span></span>
+               </div>
+               <div id="layersAddLocationDiv" class="link2" onclick="navigate.createAndEditLocation()" style="display:none">
+                <span class="s9inv link">Add Location</span>
+                <img src="images/icons/addLocationSmall.png">
+            </div>
+        </div>
+
+    </div>
+    <div id="layersPSDiv" class="w100 h100" style="display:none">
+        <table class="w100 h100 layersPSTable">
+            <tbody><tr class="layersPSTitle panelTable panelHeader">
+                <td>  <img src="images/icons/backArrow.png" class="link" onclick=" projectTree.closeTool()"> </td>
+                <td align="center"> <span class="s12b" id="layersToolCaption"></span></td>
+                <td class="link " colspan="2" align="right" onclick="toolbox.closeAllTools('projectTree',true)"><img src="images/icons/close.png"></td>
+            </tr>
+            <tr><td colspan="3">
+                <div id="layersToolWrapper" class="w100 h100 "></div>  
+            </td></tr>
+        </tbody></table>            
+    </div></div>
+    <div id="queryPanelDiv" class="panel  boxShadowLarge" style="display: none; opacity: 0;"> <table class="panelTable panelHeader s9 tdPadding5"> 
+        <tbody><tr>
+            <td>
+                <span class="s12b i18n">Query</span>
+            </td>
+            <td class="link " colspan="2" align="right" onclick="toolbox.closeAllTools('query',true)"><img src="images/icons/close.png"></td>
+        </tr>
+    </tbody></table>
+    <table class="w100 s9 tdPadding5">             
+        <tbody><tr>
+            <td valign="top">
+                <div id="queryClickResult" class="queryClickResult s9"></div>
+                <div id="queryHoverResult" class="queryHoverResult w100 s9"></div>
+            </td>
+        </tr></tbody></table></div>
+        <div id="analysisPanelDiv" class="panel boxShadowLarge" style="display: none; opacity: 0;">
+            <div id="analysisMain" class="analysisPanel">
+                <table class="tabsTable panelHeader s9"> 
+                    <tbody><tr>
+                        <td>
+                            <button id="analysisTabButton0" class="tab tabSelected i18n" onclick="analysis.showTab(0)">Tools</button>
+                            <button id="analysisTabButton1" class="tab i18n" onclick="analysis.showTab(1)">Environment</button>
+                            <button id="analysisTabButton2" class="tab i18n" onclick="analysis.showTab(2)">Maps</button>
+                        </td>
+                        <td class="link " colspan="2" align="right" onclick="toolbox.closeAllTools('analysis',true)"><img src="images/icons/close.png"></td>
+                    </tr>
+                </tbody></table>
+
+                <table id="analysisTbl0" class="panelTable s9 spacerAbove" style="opacity: 1;"> 
+                    <tbody><tr><td>
+                        <div id="analysisToolsDiv">
+                            <button id="distanceBtn" class="ButtonRoundOutline inlineBlock ButtonLarge i18n" onclick="analysis.openAnalysisToolURL('./Tools/DistanceMeasurement/distanceMeasurement.html','Distance measurement',true)" title="Distance measurement"><img src="./images/icons/distance.png"><br><span>Distance</span></button><button id="areaBtn" class="ButtonRoundOutline inlineBlock ButtonLarge i18n" onclick="analysis.openAnalysisToolURL('./Tools/AreaMeasurement/AreaMeasurement.html','Area measurement',true)" title="Area measurement"><img src="./images/icons/area.png"><br><span>Area</span></button><button id="volumeBtn" class="ButtonRoundOutline inlineBlock ButtonLarge i18n" onclick="analysis.openAnalysisToolURL('./Tools/Volume/Volume.html','Volume measurement',true)" title="Volume measurement"><img src="./images/icons/volume.png"><br><span>Volume</span></button><button id="profileBtn" class="ButtonRoundOutline inlineBlock ButtonLarge i18n" onclick="analysis.openAnalysisToolURL('./Tools/TerrainProfile/TerrainProfile.html','Terrain profile',true)" title="Terrain profile"><img src="./images/icons/profile.png"><br><span>Profile</span></button><button id="viewshedBtn" class="ButtonRoundOutline inlineBlock ButtonLarge i18n" onclick="analysis.startViewshed()" title="Viewshed"><img src="./images/icons/viewshed.png"><br><span>Viewshed</span></button><button id="swipeCompareBtn" class="ButtonRoundOutline inlineBlock ButtonLarge i18n" onclick="analysis.openAnalysisToolURL('./Tools/ImageComparison/MeshComparisonPopup.html','Swipe between layers to compare',true)" title="Swipe between layers to compare"><img src="./images/icons/swipeCompare.png"><br><span>Compare</span></button></div>
+                        </td></tr>
+                    </tbody></table>
+
+                    <table id="analysisTbl1" class="panelTable s9 spacerAbove" style="display: none; opacity: 0;"> 
+                        <tbody><tr><td>
+                            <button id="sunBtn" class="ButtonRoundOutline ButtonLarge  i18n" onclick="analysis.setSun()" title="Turn on sunlight"><img src="./images/icons/Sun.png"><br><span>Light</span></button>
+                            <button id="shadowBtn" class="ButtonRoundOutline ButtonLarge  i18n" onclick="analysis.setShadow()" title="Turn on shadow"><img src="./images/icons/Shadow.png"><br><span>Shadow</span></button>
+                        </td></tr>
+                        <tr><td>
+                            <table class="w100 tdPadding5 ">
+                                <tbody><tr>
+                                    <td class="timeSlider">
+                                        <input id="timeSlider" oninput="analysis.setTime(this.value)" type="range" min="0" max="23">
+                                    </td>
+                                    <td> 
+                                        <span id="timeSliderText">11:00</span>h
+                                    </td>
+                                </tr>
+                            </tbody></table>
+                        </td></tr>
+                    </tbody></table>
+
+                    <table id="analysisTbl2" class="panelTable s9 spacerAbove" style="display: none; opacity: 0;"> 
+                        <tbody><tr><td>
+                            <button id="contourBtn" class="ButtonRoundOutline ButtonLarge i18n" onclick="analysis.setContour()" title="Show contour map"><img src="./images/icons/contour.png"><br><span>Contour</span></button>
+                            <button id="slopeBtn" class="ButtonRoundOutline ButtonLarge i18n" onclick="analysis.setSlope()" title="Show slope map"><img src="./images/icons/slope.png"><br><span>Slope</span></button>
+                        </td></tr>
+                    </tbody></table>
+                </div>
+-->                
+                <!-- Analysis level 2 -->
+<!--                
+                <div id="analysisTool" class="w100 " style="display:none">
+                    <table id="analysisTbl3" class="w100 ">
+                        <tbody><tr class="panelHeader">
+                            <td><img id="analysisBackButton" src="images/icons/backArrow.png" class="link" onclick="analysis.closeAnalysisTool()"></td>
+                            <td><span class="s12b" id="analysisToolCaption"></span></td>
+                            <td class="link " colspan="2" align="right" onclick="toolbox.closeAllTools('analysis',true)"><img src="images/icons/close.png"></td>
+                        </tr>
+                        <tr><td colspan="3">
+                           <div id="analysisToolWrapper"></div>  
+                       </td></tr>
+                   </tbody></table>            
+               </div>
+-->               
+               <!-- Analysis external tool (URL) -->
+<!--               
+               <div id="analysisToolURL" class="w100 " style="display:none">
+                <iframe id="analysisToolIframe" class="analysisTooliframe" src=""></iframe>
+            </div></div>
+            <div id="navigatePanelDiv" class="panel boxShadowLarge" style="display: none; opacity: 0;"> 
+                <div id="navigateMain" class="navigatePanel">
+                    <table class="tabsTable s9"> 
+                        <tbody><tr><td>
+                            <button id="navigateTabButton0" class="tab tabSelected i18n" onclick="navigate.showTab(0)">Tools</button>
+                            <button id="navigateTabButton1" class="tab i18n" onclick="navigate.showTab(1)">Modes</button>
+                        </td>
+                        <td class="link s18" colspan="2" align="right" onclick="toolbox.closeAllTools('navigate',true)"><img src="images/icons/close.png"></td>
+                    </tr>
+                </tbody></table>
+                <table class="panelTable s9 spacerAbove" id="navigateTbl0" style="opacity: 1;"> 
+                    <tbody><tr> <td>
+                        <div id="navigateToolsDiv">
+                            <button id="homeBtn" class="ButtonRoundOutline inlineBlock ButtonLarge i18n" onclick="navigate.home()" title="Fly to home position"><img src="./images/icons/home.png"><br><span>Home</span></button><button id="rotateBtn" class="ButtonRoundOutline inlineBlock ButtonLarge i18n" onclick="navigate.flyAround()" title="Fly in a circle pattern around center point"><img src="./images/icons/flyAround.png"><br><span>Rotate</span></button><button id="addLocationBtn" class="ButtonRoundOutline inlineBlock ButtonLarge i18n" onclick="navigate.createAndEditLocation()" title="Add new location"><img src="./images/icons/addLocation.png"><br><span>Add location</span></button><button id="stopBtn" class="ButtonRoundOutline inlineBlock ButtonLarge i18n" onclick="navigate.stop()" title="Stop flight"><img src="./images/icons/stopFlight.png"><br><span>Stop</span></button></div></td></tr>
+                            <tr><td>
+                                <div class="spacerVertical"></div>
+                                <span class="s9 i18n">Field of View</span>
+                            </td> </tr>                    
+                            <tr> <td>
+                                <table class="w100 vAlignMiddel">
+                                    <tbody><tr><td style="width:70%" align="right">       
+                                        <input type="range" id="fiedOfViewSlider" oninput="navigate.setFieldOfView (this.value)" min="30" max="120">
+                                    </td>
+                                    <td>
+                                        <span id="fiedOfViewText">53</span>
+                                        <span>°</span> 
+                                    </td>
+                                    <td>
+                                        <button id="resetFOV" class="ButtonRoundOutline i18n" onclick="navigate.resetFOV()">Reset </button>
+                                    </td>
+                                </tr>
+                            </tbody></table>
+                        </td>
+                    </tr>
+                </tbody></table>
+
+                <table class="panelTable s9 rowSpacer" id="navigateTbl1" style="display: none; opacity: 0;"> 
+                    <tbody><tr> <td>
+                        <span class="s9 i18n">Render Modes</span>
+                    </td> </tr>                    
+                    <tr> <td>
+                        <button id="navigateMode0" class="ButtonRoundOutline ButtonRoundLeft ButtonRoundOutlineChecked i18n" onclick="navigate.navigateMode(0)" title="3D navigation mode">3D</button>
+                        <button id="navigateMode1" class="ButtonRoundOutline ButtonRoundMiddle i18n" onclick="navigate.navigateMode(1)" title="2D navigation mode">2D</button>
+                        <button id="navigateMode2" class="ButtonRoundOutline ButtonRoundRight i18n" onclick="navigate.navigateMode(2)" title="2D north navigation mode">2D North</button>
+                    </td></tr>
+                    <tr><td>
+                        <div class="spacerAbove"></div>
+                        <span class="s9 i18n ">Navigation Modes</span>
+                    </td> </tr>                    
+                    <tr> <td>
+                        <button id="undergroundBtn" class="ButtonRoundOutline ButtonLarge i18n" onclick="navigate.undergroudMode()" title="Underground mode"><img src="images/icons/underground.png"> <br><span>Underground<br>Mode</span></button>
+                        <button id="collisionBtn" class="ButtonRoundOutline ButtonLarge i18n" onclick="navigate.collisionDetection()" title="Collision detection"><img src="images/icons/collisionDetection.png"><br><span>Collision<br>Detection</span></button>
+                        <button id="slideModeBtn" class="ButtonRoundOutline ButtonLarge i18n" onclick="navigate.slideMode()" title="Slide mode"><img src="images/icons/slideMode.png"><br><span>Slide<br>Mode</span></button>
+                    </td></tr>
+                </tbody></table>
+
+                <div class="bottomBlueBar link2" onclick="toolbox.selectTool(1,true);projectTree.setTreeState(0);">
+                    <span class="s9inv i18n link">Show locations and presentations</span>
+                    <img src="images/icons/arrowRightSmall.png">
+                </div>
+            </div>
+-->            
+            <!-- Navigate level 2 -->
+<!--            
+            <div id="navigateTool" class="w100 h100" style="display:none">
+                <table id="navigateTbl3" class="w100 ">
+                    <tbody><tr>
+                        <td>                
+                            <img src="images/icons/backArrow.png" class="link" onclick="navigate.closeNavigateTool()">
+                        </td>
+                        <td> 
+                            <span class="s12b" id="navigateToolCaption"></span>
+                        </td>
+                        <td class="link s18" colspan="2" align="right" onclick="toolbox.closeAllTools('navigate',true)"><img src="images/icons/close.png"></td>
+                    </tr>
+                    <tr><td colspan="3">
+                        <div id="navigationToolWrapper"></div>
+                    </td></tr>
+                </tbody></table>            
+            </div>   
+            <div id="navigateToolURL" class="w100 " style="display:none">
+                <iframe id="navigateToolIframe" class="navigateTooliframe" src=""></iframe>
+            </div></div>
+            <div id="searchPanelDiv" class="panel panelSmall boxShadowLarge" style="display: none; opacity: 0;">
+                <table class="w100 s9 tdPadding5"> 
+                    <tbody><tr>
+                        <td><span class="s12b">Search</span></td>
+                        <td align="right">
+                            <span class="link s18" onclick="toolbox.closeAllTools('search',true)"><img src="images/icons/close.png"></span>
+                        </td></tr>
+                        <tr>
+                            <td class="w100">
+                                <input type="text" id="searchInputID" class="w100" value="" autocomplete="on" onkeyup="search.initAutoComplete();" onkeydown="if (event.key==='Enter')search.doSearch();" placeholder="Search address or place">
+                            </td>
+                            <td>
+                                <button id="searchBtn" class="ButtonRoundOutline i18n " onclick="search.doSearch()"><img src="images/icons/searchSmall.png"></button>
+                            </td>
+                        </tr>
+                    </tbody></table>
+                    <div id="searchResultDiv" class="w100 h100" style="display:none">
+                    </div> </div>
+                    <div id="settingsPanelDiv" class="panel boxShadowLarge" style="display: none; opacity: 0;">
+                      <table class="tabsTable panelHeader s9"> 
+                        <tbody><tr>
+                            <td>
+                                <button id="settingsTabButton0" class="tab tabSelected i18n" onclick="settings.showTab(0)">Settings</button>
+                                <button id="settingsTabButton1" class="tab i18n" onclick="settings.showTab(1)">Projects</button>
+                            </td>
+                            <td class="link s18" colspan="2" align="right" onclick="toolbox.closeAllTools('settings',true)"><img src="images/icons/close.png"></td>
+                        </tr>
+                    </tbody></table>
+
+                    <div class="scrollY" id="settingsWrapperID">
+                      <table id="settingsTbl0" class="panelTable propertiesTable  " style="opacity: 1;"> 
+                        <tbody><tr class="settingsGraphics"><td colspan="2" class="propertiesTitle ">
+                            Graphics 
+                        </td></tr>
+                        <tr class="settingsGraphics">
+                            <td>  Quality</td>
+                            <td>                    
+                                <select id="qualityID" onchange="settings.SetOptionParam ('TerrainModelQuality',this.value)">
+                                    <option value="0">Normal</option>
+                                    <option value="1">High</option>
+                                    <option value="2">Best</option>
+                                </select>
+                            </td>
+                        </tr>   
+                        <tr class="settingsView"><td colspan="2" class="propertiesTitle">
+                            View
+                        </td></tr>
+                        <tr class="settingsView">
+                            <td> Units</td>
+                            <td>                    
+                                <select id="unitsID" onchange="settings.setUnits()">
+                                    <option value="0">Km / Meters</option>
+                                    <option value="1">Miles / Feet</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr class="settingsView">
+                            <td> Altitude</td>
+                            <td>                    
+                                <select id="altitudeTypeID" onchange="settings.setAltitudeType()">
+                                    <option value="0">Above Ground Level</option>
+                                    <option value="1">Absolute Values</option>
+                                </select>
+                            </td></tr>
+                            <tr class="settingsView">
+                                <td> Navigation Controls</td>
+                                <td>                    
+                                    <label class="switch">
+                                        <input type="checkbox" id="showNavigationControlsID" checked="" onchange="settings.showNavigationControls()">
+                                        <span class="slider round"></span>
+                                    </label>		
+                                </td>
+                            </tr>
+                            <tr class="settingsView">
+                                <td> Center Sign</td>
+                                <td>                    
+                                    <label class="switch">
+                                        <input type="checkbox" id="showCenterSignID" checked="" onchange="settings.showCenterSign()">
+                                        <span class="slider round"></span>
+                                    </label>		
+                                </td>
+                            </tr>
+                            <tr class="settingsView">
+                                <td> Status Bar</td>
+                                <td>                    
+                                    <label class="switch">
+                                        <input type="checkbox" id="showStatusBarID" checked="" onchange="settings.showStatusBar()">
+                                        <span class="slider round"></span>
+                                    </label>		
+                                </td>
+                            </tr>
+                            <tr class="settingsView">
+                                <td> MGRS Coordinates</td>
+                                <td>                    
+                                    <label class="switch">
+                                        <input type="checkbox" id="showMGRSID" checked="" onchange="settings.showMGRS()">
+                                        <span class="slider round"></span>
+                                    </label>		
+                                </td>
+                            </tr>
+                            <tr class="settingsEffects"><td colspan="2" class="propertiesTitle">
+                                Post Effects 
+                            </td></tr>
+                            <tr class="settingsEffects">
+                                <td> Depth Perception</td>
+                                <td>
+                                    <label class="switch">
+                                        <input type="checkbox" id="depthPerceptionID" checked="" onchange="settings.depthPerception()">
+                                        <span class="slider round"></span>
+                                    </label>		
+                                </td>
+                            </tr>                                 
+                            <tr class="settingsEffects">
+                                <td> Saturation</td>
+                                <td>                    
+                                    <input type="range" id="saturationSlider" oninput="settings.SetOptionParam ('Saturation',this.value)" min="-100" max="100">
+                                </td>
+                            </tr>
+                            <tr class="settingsEffects">
+                                <td> Brightness</td>
+                                <td>                    
+                                    <input type="range" id="brightnessSlider" oninput="settings.SetOptionParam ('Brightness',this.value)" min="-100" max="100">
+                                </td>
+                            </tr>                        
+                            <tr class="settingsEffects">
+                                <td> Contrast</td>
+                                <td>                    
+                                    <input type="range" id="contrastSlider" oninput="settings.SetOptionParam ('Contrast',this.value)" min="-100" max="100">
+                                </td>
+                            </tr>                                                
+                            <tr class="settingsEffects">
+                                <td> Gamma</td>
+                                <td>                    
+                                    <input type="range" id="gammaSlider" oninput="settings.SetOptionParam ('Gamma',this.value/10)" min="0" max="100">
+                                </td>
+                            </tr>                          
+                            <tr class="settingsEffects">
+                                <td colspan="2" align="right">
+                                    <button id="settingsDefault" class="ButtonRoundOutline i18n" onclick="settings.resetPostEffects()">Reset to Default</button>
+                                </td>
+                            </tr>
+                            <tr class="settingsShadow"><td colspan="2" class="propertiesTitle">
+                                Shadow
+                            </td></tr>
+                            <tr class="settingsShadow">
+                                <td> Global Shadow</td>
+                                <td>                    
+                                    <input type="color" id="globalShadowColor" class="demo" value="#ffffff" onchange="settings.setShadowColor()">
+                                </td>
+                            </tr>       
+                            <tr class="settingsAbout"><td colspan="2" class="propertiesTitle">
+                                About 
+                            </td></tr>          
+                            <tr class="settingsAbout">
+                                <td> TerraExplorer Fusion</td>
+                                <td>                    
+                                    <span id="TerraExplorerVersion" class="s9">8.0.0.30323</span> 
+                                </td>
+                            </tr>
+                            <tr class="settingsAbout">
+                                <td> Help Center</td>
+                                <td>                    
+                                    <button class="ButtonRoundOutline i18n" onclick="window.open('https://support.skylinesoft.com/hc/en-us/categories/360002859839-TerraExplorer-for-Web', '_blank');">Open</button>
+                                </td>
+                            </tr>
+                            <tr class="settingsAbout">
+                                <td> Error Logger [ <span id="errorLoggerCounterID"></span> ] </td>
+                                <td>                    
+                                    <button class="ButtonRoundOutline i18n" onclick="application.showErrorLog()">Show</button>
+                                </td>
+                            </tr>
+                            <tr class="settingsAbout">
+                                <td> License Notices</td>
+                                <td>                    
+                                    <button class="ButtonRoundOutline i18n" onclick="window.open('./licenseAgreement.html', '_blank');">Show</button>
+                                </td>
+                            </tr>
+                        </tbody></table>
+
+                        <table id="settingsTbl1" class="panelTable tdPadding5 s9 " style="display: none; opacity: 0;"> 
+                            <tbody><tr class="settingsOpenInTED"><td colspan="2" class="propertiesTitle">
+                                TerraExplorer for Desktop
+                            </td></tr>      
+                            <tr class="settingsOpenInTED">
+                                <td onclick="application.openInTED()" class="link2"> <span class=" s9 spacedText">Open this project in the Desktop App</span><img src="./images/icons/arrowRightSmall.png"> </td>
+                                <td align="right"></td>
+                            </tr>   
+                            <tr class="settingsOpenInTED"><td colspan="2">
+                                <span class="link2 s9 color1 roundBackground " onclick="window.open('https://www.skylinesoft.com/terraexplorer-for-desktop/', '_blank').focus() ;">Don't have TerraExplorer Plus? Learn more.</span>
+                            </td></tr>                    
+                            <tr class="settingsLoadFromSGS"><td colspan="2" class="propertiesTitle">
+                                <div class="spacerVertical"></div>
+                                Open another project
+                            </td></tr>      
+                            <tr class="settingsLoadFromSGS">
+                                <td> <span class="s9">Load another project from SkylineGlobe Server</span> </td>
+                                <td align="right"> <button id="loadProjectBtn" class="ButtonRoundOutline i18n" onclick="settings.loadProject()"> Load </button></td>
+                            </tr>   
+                            <tr class="settingsRecentProjects"><td colspan="2" class="propertiesTitle ">           
+                                <div class="spacerVertical"></div>
+                                Recent Projects
+                            </td></tr>   
+                            <tr class="settingsRecentProjects"><td colspan="2">
+                                <div id="recentProjectsDiv" class="s9 link recentProjects"><ul class="recentProjectsList"><li><span class="link2 spacedText" onclick="application.reloadPageURL(&quot;https://eu-cluster-1.nmcaydence.com/sg/sse/projects/503687&quot;);">503687 </span></li></ul></div>
+                            </td></tr>   
+                        </tbody></table>
+                    </div></div>
+                    <div tabindex="-1" role="dialog" class="ui-dialog ui-corner-all ui-widget ui-widget-content ui-front LoginDiv dialog ui-draggable ui-resizable" aria-describedby="logInContainer" aria-labelledby="ui-id-1" style="display: none; position: absolute;"><div class="ui-dialog-titlebar ui-corner-all ui-widget-header ui-helper-clearfix ui-draggable-handle"><span id="ui-id-1" class="ui-dialog-title">Login to a SkylineGlobe Server</span><button type="button" class="ui-button ui-corner-all ui-widget ui-button-icon-only ui-dialog-titlebar-close" title=""><span class="ui-button-icon ui-icon ui-icon-closethick"></span><span class="ui-button-icon-space"> </span></button></div><div id="logInContainer" class="LoginDiv ui-dialog-content ui-widget-content" style="">
+                        <table class="w100 h100 s9 tdPadding5 spacerAbove">
+                            <tbody><tr>
+                                <td><input class="w100" type="url" id="serverURL" value="" oninput="application.validateField()" placeholder="Server URL"> </td>
+                            </tr>
+                            <tr>
+                                <td><input class="w100" type="text" id="userName" value="" oninput="application.validateField()" placeholder="User Name"> </td>
+                            </tr>
+                            <tr id="passwordLine">
+                                <td><input class="w100" type="password" id="password" value="" oninput="application.validateField()" placeholder="Password" onkeydown="if (event.keyCode === 13) {$(&quot;#SGSConnectBtn&quot;).click();}"> </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" class="h20px">
+                                    <span class="s9 LoginError" style="display:none" id="errorLogin"></span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <button id="SGSConnectBtn" class="ButtonRoundOutline i18n" onclick="application.login()">Log in</button>
+                                </td>
+                                <td align="right">
+                                    <button id="logOut" class="ButtonRoundOutline i18n" onclick="application.logout()" disabled="" style="display: none;">Log out</button>
+                                </td>
+                            </tr></tbody></table>
+                        </div><div class="ui-resizable-handle ui-resizable-n" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-e" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-s" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-w" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-se ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-sw" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-ne" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-nw" style="z-index: 90;"></div></div><div tabindex="-1" role="dialog" class="ui-dialog ui-corner-all ui-widget ui-widget-content ui-front toolConainer dialog ui-draggable ui-resizable" aria-describedby="loadLayerContainer" aria-labelledby="ui-id-2" style="display: none; position: absolute;"><div class="ui-dialog-titlebar ui-corner-all ui-widget-header ui-helper-clearfix ui-draggable-handle"><span id="ui-id-2" class="ui-dialog-title">Load Layers</span><button type="button" class="ui-button ui-corner-all ui-widget ui-button-icon-only ui-dialog-titlebar-close" title=""><span class="ui-button-icon ui-icon ui-icon-closethick"></span><span class="ui-button-icon-space"> </span></button></div><div id="loadLayerContainer" style="padding: 0px;" class="ui-dialog-content ui-widget-content">
+                            <table class="panelTable s9 h100"> 
+                                <tbody><tr class="h100">
+                                    <td>
+                                        <iframe type="text/html" id="loadLayerIframe" class="loadLayeriframe h100" src=""></iframe>
+                                    </td>
+                                </tr>
+                            </tbody></table>
+                        </div><div class="ui-resizable-handle ui-resizable-n" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-e" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-s" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-w" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-se ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-sw" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-ne" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-nw" style="z-index: 90;"></div></div><div tabindex="-1" role="dialog" class="ui-dialog ui-corner-all ui-widget ui-widget-content ui-front toolConainer dialog ui-draggable ui-resizable" aria-describedby="messagePopup" aria-labelledby="ui-id-3" style="display: none; position: absolute;"><div class="ui-dialog-titlebar ui-corner-all ui-widget-header ui-helper-clearfix ui-draggable-handle"><span id="ui-id-3" class="ui-dialog-title">&nbsp;</span><button type="button" class="ui-button ui-corner-all ui-widget ui-button-icon-only ui-dialog-titlebar-close" title=""><span class="ui-button-icon ui-icon ui-icon-closethick"></span><span class="ui-button-icon-space"> </span></button></div><div id="messagePopup" class="messagePopup s9 ui-dialog-content ui-widget-content" style="padding: 0px;">
+                            <div id="messagePopupContent" class="messagePopupContent"></div>
+                        </div><div class="ui-resizable-handle ui-resizable-n" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-e" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-s" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-w" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-se ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-sw" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-ne" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-nw" style="z-index: 90;"></div></div> 
+                        <div tabindex="-1" role="dialog" class="ui-dialog ui-corner-all ui-widget ui-widget-content ui-front toolConainer dialog ui-draggable ui-resizable" aria-describedby="attributeTableDiv" aria-labelledby="ui-id-4" style="display: none; position: absolute;"><div class="ui-dialog-titlebar ui-corner-all ui-widget-header ui-helper-clearfix ui-draggable-handle"><span id="ui-id-4" class="ui-dialog-title">&nbsp;</span><button type="button" class="ui-button ui-corner-all ui-widget ui-button-icon-only ui-dialog-titlebar-close" title=""><span class="ui-button-icon ui-icon ui-icon-closethick"></span><span class="ui-button-icon-space"> </span></button></div><div id="attributeTableDiv" class="ui-dialog-content ui-widget-content" style="">
+                            <div> Search query: <input type="text" class="attributeSearch" id="attributeTableSearchString"><button class="ButtonRoundOutline i18n" onclick="projectTree.queryAttributes()">Search</button></div>
+                            <table id="attributeTable" class="attributeTable s9"></table>    
+                        </div><div class="ui-resizable-handle ui-resizable-n" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-e" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-s" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-w" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-se ui-icon ui-icon-gripsmall-diagonal-se" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-sw" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-ne" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-nw" style="z-index: 90;"></div></div>
+                        <div tabindex="-1" role="dialog" class="ui-dialog ui-corner-all ui-widget ui-widget-content ui-front presentationPopup dialog ui-draggable" aria-describedby="presentationPopup" aria-labelledby="ui-id-5" style="display: none;"><div class="ui-dialog-titlebar ui-corner-all ui-widget-header ui-helper-clearfix ui-draggable-handle"><span id="ui-id-5" class="ui-dialog-title">&nbsp;</span><button type="button" class="ui-button ui-corner-all ui-widget ui-button-icon-only ui-dialog-titlebar-close" title=""><span class="ui-button-icon ui-icon ui-icon-closethick"></span><span class="ui-button-icon-space"> </span></button></div><div id="presentationPopup" style="padding: 0px;" class="ui-dialog-content ui-widget-content">
+                            <iframe type="text/html" id="presentationIframe" class="presentationContent" src=""></iframe>
+                        </div></div>
+-->
+    <script src="./custom/startupScript.js" type="text/javascript" async="true"></script>
+    
+    <table>
+        <tr><td><div id='tef-1-label' class='frame-label blue'>  </div><iframe src='' id='tef'   class='tef frame blue'>  </iframe></td></tr>
+        <tr><td><div id='tef-2-label' class='frame-label yellow'></div><iframe src='' id='tef-2' class='tef frame yellow'></iframe></td></tr>
+        <tr><td><div id='tef-3-label' class='frame-label green'> </div><iframe src='' id='tef-3' class='tef frame green'> </iframe></td></tr>
+        <!--tr><td><div id='tef-4-label' class='frame-label red'>   </div><iframe src='' id='tef-4' class='tef frame red'>   </iframe></td></tr-->
+        <!--tr><td><iframe src='' id='tef-5' class='tef frame yellow'></iframe></td></tr-->
+    </table>
+
+</body>
+</html>

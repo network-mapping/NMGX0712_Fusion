@@ -1,0 +1,56 @@
+﻿#layers-sidebar {
+    position: fixed;
+    z-index: 1;
+    top: 87px;
+    left: 0px;
+    height: 100%;
+    width: 0px;
+    overflow-x: hidden;
+    tQQransition: 0.5s;
+    box-sizing: border-box;
+    background-color: #222222;
+}
+
+#layers-sidebar-content {
+    color: white;
+    padding-top: 20px;
+}
+
+.layers-menu-category {
+    color: #8dc75a;
+    padding: 5px 20px 5px 0px;
+}
+
+.layers-menu-item {
+    padding: 5px 0px;
+    width: 200px;
+    margin-right: 10px;
+    margin-left: 35px;
+    cursor: pointer;
+}
+
+
+
+#search-sidebar {
+    position: fixed;
+    z-index: 1;
+    top: 88px;
+    left: 0px;
+    height: 100%;
+    width: 0px;
+    overflow-x: hidden;
+    box-sizing: border-box;
+    background-color: #222222;
+}
+
+#search-sidebar-results {
+    color: #8dc75a;
+    padding: 5px 5px 0px 20px;
+}
+
+.search-sidebar-results-location {
+    color: #8dc75a; 
+    padding-top: 10px;
+    cusrsor: pointer;  
+}
+

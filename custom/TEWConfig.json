@@ -1,0 +1,19 @@
+{
+  "DemoProjects": [
+		{
+			"projectName": "Features Demo",
+			"projectImageURL": "./custom/images/DefaultDemo.png",
+			"projectUrl": "https://cloud.skylineglobe.com/SG/demos/projects/TEF_Demo_Project&presentation=%20Auburn%20-%20Dynamic%20Objects%20and%20Water%20Bodies"
+		},
+		{
+			"projectName": "Close Range",
+			"projectImageURL": "./custom/images/PhotoInspection.png",
+			"projectUrl": "https://cloud.skylineglobe.com/SG/Demos/projects/PhotoInspection&presentation=%20Photo Inspection"
+		},
+		{
+			"projectName": "Mexico Beach",
+			"projectImageURL": "./custom/images/MexicoBeach.png",
+			"projectUrl": "https://cloud.skylineglobe.com/SG/demos/projects/Mexico_Beach_Emergency_Response&presentation=Presentation%5C%20Mexico%20Beach"
+		}
+    ]
+}

@@ -1,0 +1,8 @@
+html {direction:rtl;}
+.toolbox{height:100%;width: 58px; background-color:rgba(255,255,255,1);position:absolute;top:0px;right:0px; }
+.statusBar {position:absolute; left:5px;right:auto; bottom: 5px; background-color: rgba(255,255,255,0.9);border-radius:7px;font-family: monospace;}
+.LoginTitleDiv {position:absolute; right:10px;bottom: 10px; width: 42px; height: 42px;border-radius: 42px; background-image: url("../images/icons/login.png");background-repeat: no-repeat; background-position: center; cursor: pointer;display:table;}
+.LoginTitleOn {background-color: var(--Color2);background-image: url('')}
+.messageBar {position:absolute; right:auto; left: 5px; bottom: 35px; width: 50%; height: 10px;max-height: 10px;padding: 5px; border-radius:10px;overflow:auto; background-color: white;transition: all 0.6s;}
+.panel {position:absolute; top:10px; right:68px;left:auto;width:350px; height:100px;padding:0px; background-color: white;font-family:  Calibri,Arial; font-size: 11pt; font-style: normal; font-weight: normal;border-radius:10px;transition:all 500ms;}
+.navigationBarDiv {position:absolute; left:5px; right:auto; top: 50%;width:33px; height:135px; background-color: rgba(255,255,255,0.9);border-radius: 10px; -ms-transform: translateY(-50%);transform: translateY(-50%);}

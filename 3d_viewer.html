@@ -1,0 +1,2074 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<!--  CSS  -->
+    <meta charset="utf-8">
+<!--    <meta http-equiv="Access-Control-Allow-Origin" content="*">-->
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">  
+
+<!--  JS  -->
+    <!-- QWE Changed to use 3.6.0 <script src="./js/jquery.js" type="text/javascript"></script> -->
+    <script src="./js/jquery-3.6.0.min.js" type="text/javascript"></script>
+    <!--script src="./js/te4w.js?srcVer=7.3.0.6876"></script-->
+    <!--script src="./js/te4w.js?srcVer=7.3.1.8175"></script-->
+    <!-- QWE Not applicable???? <script src="./js/te4w.js"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>    <!--  needed for debounce() function  -->
+
+<!--  CSS  -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
+    <link href="./nmg-viewer/css/caydence_toolbar.css" rel="stylesheet" type="text/css" />
+    <link href="./nmg-viewer/css/caydence_layers_sidebar_and_menu.css" rel="stylesheet" type="text/css" />
+    
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+    <style>
+        html                          { height: 100%; }
+        body                          { padding: 0; margin: 0; overflow: hidden; height: 100%; font-family: 'ubunturegular'; background-color: black !important; }
+
+        .tree-category                { color: #8dc75a; }
+        .tree-category-level-0        { margin-left: 0px; }
+        .tree-category-level-1        { margin-left: 5px; margin-top: 10px; }
+        .tree-category-level-2        { margin-left: 25px;  }
+        .tree-category-level-3        { margin-left: 45px; }
+        .tree-category-level-4        { margin-left: 65px; }
+        .tree-category-image          { display: inline-block; width: 15px; }
+        .tree-category-not-locked     { cursor: pointer; }
+        .tree-category-no-visible-children    { color: #4c6a30!important; cursor: pointer; }
+        .tree-category-with-visible-children  { cursor: pointer; }
+        .tree-category-image-level-0  { margin-left: 0px; }
+        .tree-category-image-level-1  { margin-left: 0px; }
+        .tree-category-image-level-2  { margin-left: 0px; }
+        .tree-category-image-level-3  { margin-left: 0px; }
+        .tree-category-image-level-4  { margin-left: 0px; }
+        .tree-category-name           { display: inline-block; margin-left: 5px; }
+        .tree-category-name-level-0   { width: 230px; font-size: 18px; }
+        .tree-category-name-level-1   { width: 220px; font-size: 16px; }
+        .tree-category-name-level-2   { width: 200px; font-size: 14px; }
+        .tree-category-name-level-3   { width: 180px; font-size: 12px; }
+        .tree-category-name-level-4   { width: 160px; font-size: 11px; }
+        .tree-category-point-size     { display: inline-block; cursor: pointer; width: 10px; text-align: center; font-size: 15px; }
+        .tree-category-point-size-minus   { margin-right: 5px; }        
+        .tree-category-point-size-hidden  { display: none!important; }
+
+        .tree-group                   { width: 270px; }
+        .tree-group-open              { display: block; }
+        .tree-group-closed            { display: none; }
+
+        .tree-layer-item              { display: inline-block; cursor: pointer; }
+        .tree-layer-item-visible      { color: white; }
+        .tree-layer-item-hidden       { color: grey; }
+        .tree-layer-item-level-0      { margin-left: 10px; width: 230px; font-size: 18px; }
+        .tree-layer-item-level-1      { margin-left: 30px; width: 210px; font-size: 16px; }
+        .tree-layer-item-level-2      { margin-left: 50px; width: 190px; font-size: 14px; }
+        .tree-layer-item-level-3      { margin-left: 70px; width: 170px; font-size: 12px; }
+        .tree-layer-item-level-4      { margin-left: 90px; width: 150px; font-size: 11px; }
+        .tree-layer-point-size        { display: inline-block; cursor: pointer; width: 10px; text-align: center; margin-right: 5px;           margin-left: 0px; }
+
+
+    </style>
+</head>
+
+<body oncontextmenu='return false;' style='background: black'>
+
+    <div id="toolbar">
+        <div class="toolbar-categories">
+            <div class="toolbar-section">
+                <div id="toolbar-button-layers" class="toolbar-button-inactive" onclick="toggleLayersSidebar()">
+                    <img src="./nmg-viewer/img/toolbar/layers.png" />
+                    <div class="title">Layers</div>
+                </div>
+                <div id="toolbar-button-search" class="toolbar-button-inactive" onclick="toggleSearchSidebar()">
+                    <img src="./nmg-viewer/img/toolbar/search.png" />
+                    <div class="title">Search</div>
+                </div>
+                <div id="toolbar-button-2d" class="toolbar-button-inactive" onclick="set2dMode()">
+                    <img src="./nmg-viewer/img/toolbar/2D.png" />
+                    <div class="title">2D Mode</div>
+                </div>
+                <div id="toolbar-button-3d" class="toolbar-button-inactive" onclick="set3dMode()">
+                    <img src="./nmg-viewer/img/toolbar/3D.png" />
+                    <div class="title">3D Mode</div>
+                </div>
+                <div id="toolbar-button-fly-around" class="toolbar-button-inactive" onclick="toggleFlyAroundMode()">
+                    <img src="./nmg-viewer/img/toolbar/fly_around.png" />
+                    <div class="title">Fly Around</div>
+                </div>
+                <div id="toolbar-button-streetview" class="toolbar-button-inactive" onclick="openStreetview()">
+                    <img src="./nmg-viewer/img/toolbar/streetview.png" />
+                    <div class="title">Streetview</div>
+                </div>
+                <div class="toolbar-section-title">Navigation</div>
+            </div>
+            <div class="toolbar-section">
+                <div id="toolbar-button-distance" class="toolbar-button-inactive" onclick="startDistanceTool()">
+                    <img src="./nmg-viewer/img/toolbar/distance.png" />
+                    <div class="title">Distance</div>
+                </div>
+                <div id="toolbar-button-query" class="toolbar-button-inactive" onclick="startQueryTool()">
+                    <img src="./nmg-viewer/img/toolbar/query.png" />
+                    <div class="title">Query</div>
+                </div>
+                <div class="toolbar-section-title">Measure</div>
+            </div>
+            <div class="toolbar-section">
+                <div id="toolbar-button-metric" class="toolbar-button-inactive" onclick="setDistanceUnits(0)">
+                    <img src="./nmg-viewer/img/toolbar/ruler.png" />
+                    <div class="title">Metric</div>
+                </div>
+                <div id="toolbar-button-imperial" class="toolbar-button-inactive" onclick="setDistanceUnits(1)">
+                    <img src="./nmg-viewer/img/toolbar/ruler.png" />
+                    <div class="title">Imperial</div>
+                </div>
+                <div class="toolbar-section-title">Display</div>
+            </div>
+            <div class="toolbar-section">
+                <div id="toolbar-button-shadows" class="toolbar-button-inactive" onclick="toggleShadowMode()">
+                    <img src="./nmg-viewer/img/toolbar/shadows.png" />
+                    <div class="title">Shadows</div>
+                </div>
+                <div class="toolbar-section-title">Environment</div>
+            </div>
+        </div>  <!--  /toolbar-categories  -->
+    </div>  <!--  /toolbar  -->
+
+    <div id="layers-sidebar" class="sidebar">
+        <div id="layers-sidebar-content-default"> 
+        </div>  <!--  /layers-sidebar-content-default  -->
+        <div id="layers-sidebar-content-custom"> 
+        </div>  <!--  /layers-sidebar-content-custom  -->
+    </div>  <!--  /layers-sidebar  -->
+
+    <div id="search-sidebar" class="sidebar">
+        <div id="search-sidebar-input" style='height: 60px; padding: 20px 0px 0px 20px;'>
+            <input id='search-input' name='search-input' type='text' placeholder='location' style='width: 180px; float: left; height: 28px; border: none; color: #888888; padding-left: 10px;'> 
+            <button id='search-button' style='width: 60px; border: none; background: #8dc75a; text-align: center; float: left; height: 30px; color: #ffffff'>Search</button>
+        </div>  <!--  /search-sidebar-input  -->
+        <div id="search-sidebar-results" style='clear: both'> 
+        </div>  <!--  /search-sidebar-results  -->
+    </div>  <!--  /search-sidebar  -->
+
+    <div id="progress" style="position: absolute; z-index: 5; top: 400px; width: 100%; display: none; padding: 10px">
+        <div style="width: 25%; margin: auto; text-align: center; color: white; padding: 20px">
+            <img src="./nmg-viewer/img/toolbar/caydence_logo.png">
+            <div><i class="fa fa-spinner fa-spin" aria-hidden="true" style="color:#8dc75a;"></i></div>
+            Loading your data...
+        </div>
+    </div>
+
+    <div class="modal fade" id="show-errors-modal" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content" style="margin-top: 350px; width: 900px; position: absolute; left: 50%; right: 50%; transform: translate(-50%, -50%)">
+                <div class="modal-header" style="background: rgb(240,240,240)">
+                    <div id='show-errors-modal-header-text' style='display: inline-block; width: 100%; text-align: center'>Error</div>
+                    <button type="button" class="close show-errors-modal-close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body" style="max-height: 300px; overflow-x: auto">
+                    <div id="show-errors-modal-details" style='padding: 20px'></div>
+                </div>
+                <!--div class="modal-footer"-->
+                <!--/div-->
+            </div>
+        </div>
+    </div> <!-- /modal -->
+
+    <div id="mainContainer" style="width: 1000px; height:1000px ; border: 1px solid black">
+    </div>
+
+
+    <script>
+        "use strict";
+
+        window.onerror = function (msg, url, lineNo, columnNo, error) { 
+//DIAGNOSTIC//            alert(
+//DIAGNOSTIC//                "javascript error"            + "\n\n" + 
+//DIAGNOSTIC//                "message : "  + msg           + "\n\n" + 
+//DIAGNOSTIC//                "url : "      + url           + "\n\n" +
+//DIAGNOSTIC//                "line : "     + lineNo        + "\n\n" + 
+//DIAGNOSTIC//                "column : "   + columnNo      + "\n\n" + 
+//DIAGNOSTIC//                "error : "    + error
+//DIAGNOSTIC//            );
+            console.error(
+                "javascript error;"       + "\n\n" + 
+                "Message : "  + msg       + "\n\n" + 
+                "url     : "  + url       + "\n\n" + 
+                "Line    : "  + lineNo    + "\n\n" + 
+                "Column  : "  + columnNo  + "\n\n" + 
+                "Error   : "  + error
+            );
+            if (!glbErrorDisplayedToUser) {
+                displayErrorToUser(msg);
+                glbErrorDisplayedToUser = true;
+            }
+        }
+
+        let glbDiagFlag = false;
+        let glbStylesToHideList = [];
+        let glbProcessedFoldersList = [];
+        let glbProcessedLayersList = [];
+        let glbProcessedElementsList = [];
+        let glbProcessedElementsListCount2 = 0;
+        let glbParseXmlValidFlag = true;
+        let glbParseXmlErrorMessage = '';
+        let glbErrorDisplayedToUser = false;
+        let glbDelimiterFolderPath = ':';
+        let glbDelimiterLayerPath  = '~';
+
+
+
+        //
+        //  Add a listener to receive fly_to messages
+        //
+        window.addEventListener('message', function(event) {  
+            console.log("message listener: " + typeof event.data + ", " + event.data.call + ", " + event.data.lng + ", " + event.data.lat + ", " + event.data.alt);
+            flyToLngLat(event.data.lng, event.data.lat, "POINT", event.data.alt);
+        });
+
+
+        //
+        //  Get parameters passed in the url and validate
+        //
+        var params = [];
+        var keyValuePairs = [];
+        var keyValue;
+        keyValuePairs = document.location.search.replace("?", "").split("&");
+        var datatableAvailable = false;
+        var caydenceFieldAvailable = false;
+
+        for (var i = 0; i < keyValuePairs.length; i++) {
+            keyValue = keyValuePairs[i].split("=");
+            params[keyValue[0]] = keyValue[1];
+        }
+        console.log('main: parsed parameters', params);
+
+        if (params['datatable']     === 'y')  datatableAvailable = true;
+        if (params['caydencefield'] === 'y')  caydenceFieldAvailable = true;
+        if (params['diag']          === 'y')  glbDiagFlag = true;
+
+
+        //
+        //  If Caydence will be displaying additional toolbar buttons then move the Terra Explorer toolbar right to leave space
+        //
+        var toolbarOffset = 0;
+        if (datatableAvailable)                            toolbarOffset += 160;
+        if (caydenceFieldAvailable)                        toolbarOffset += 200;
+        if (datatableAvailable && caydenceFieldAvailable)  toolbarOffset += 10;
+        if (toolbarOffset > 0)                             $('.toolbar-categories').css('margin-left', toolbarOffset);
+
+
+//PREV        //
+//PREV        //  Start interval timer to monitor for default viewer toobar, whch automatically appears on start up, and hide when found
+//PREV        //
+//PREV        console.log("Starting interval time to monitor for default viewer toolbar icon");
+//PREV        var checkToolbarLoopCount = 0;
+//PREV        var checkToolbarStartTime = new Date().getTime();
+//PREV        var checkToolbarIntervalId = setInterval(checkToolbar, 500);
+
+        //
+        //  start TE4W
+        //
+        $('#progress').css('display', 'block');
+        console.log("3d_viewer: Starting startTerraExplorer4Web for mainContainer and " + params['server']);
+        startTerraExplorer4Web(
+            "mainContainer",
+            params['server'],
+            callbackFunction
+        );
+        console.log("3d_viewer: startTerraExplorer4Web command is now running asynchronously to " + params['server'] + ", callback function will be trigger when function completes");
+
+        function callbackFunction() {
+            var fullHref = window.location.href;
+            var splitHref = fullHref.split("?");
+            console.log("3d_viewer: callbackFunction: Running " + splitHref[0]);
+            console.log("3d_viewer: callbackFunction: with parameters " + splitHref[1]);
+            console.log("3d_viewer: callbackFunction: Terra Explorer version number: " + TerraExplorer.Version);
+            console.log("3d_viewer: callbackFunction: Setting TerraExplorer.QualityMode to high");
+//            TerraExplorer.settings.quality = TerraExplorer.QualityMode.HIGH;            
+            TerraExplorer.settings.QualityMode = TerraExplorer.QualityMode.HIGH;            
+//PREV            resizeWindow();
+
+            $('#MenuButtonDiv').css('display', 'none');
+            $('#StatusBarDiv').css('display', 'block');
+            $('#CenterSign').css('display', 'block'); 
+            $('#NavigationDiv').css('display', 'block');
+            $('#StatusBarDiv').css('width', '50%');
+            $('#StatusBarDiv').css('left', '250px');
+
+//PREV            //  Set button styles to show correct default values
+//PREV            if (TerraExplorer.navigate.viewMode.mode == TerraExplorer.ViewMode._2D)  { document.getElementById("toolbar-button-2d").className="toolbar-button-active"; }
+//PREV            if (TerraExplorer.navigate.viewMode.mode == TerraExplorer.ViewMode._3D)  { document.getElementById("toolbar-button-3d").className="toolbar-button-active"; }
+//PREV            if (TerraExplorer.internal.Units.AltitudeUnit == 0)                      { document.getElementById("toolbar-button-metric").className="toolbar-button-active"; }
+//PREV            if (TerraExplorer.internal.Units.AltitudeUnit == 1)                      { document.getElementById("toolbar-button-imperial").className="toolbar-button-active"; }
+
+            //  Fix to prevent tooltip misalignment
+            TerraExplorer.tools.SideBar._isShown = false;
+
+//PREV            //  Process all layer objects and hide any old distances which may have been stored locally. Also fix to Lidar layers visibility
+//PREV            var i = 0;
+//PREV            var endFlag = false;
+//PREV            do {
+//PREV                if (TerraExplorer.project.items[i] != undefined) { 
+//PREV                    var thisDisplayName = TerraExplorer.project.items[i]['_object']['displayName'];
+//PREV                    var thisType = TerraExplorer.project.items[i]['_object']['type'];
+//PREV                    var thisShow = TerraExplorer.project.items[i].show;
+//PREV                    if (thisType == 'distance') {   //  possible alternative to hiding is to use localStorage.removeIten("_TEW_Layers_")
+//PREV                        console.log("callbackFunction: Layers scan found an entry of type distance, '" + thisDisplayName + "', default visibilty was " + thisShow); 
+//PREV                        TerraExplorer.project.items[i].show = false; 
+//PREV                    } 
+//PREV                    i++;
+//PREV                } else { 
+//PREV                    endFlag = true; 
+//PREV                }
+//PREV            } while (endFlag == false);
+
+//PREV            //  Get the layer details from the project, which are needed to generate the layers menu
+//PREV            if (params['server'] != '') {
+//PREV                console.log("callbackFunction: Server parameter is set. Will process layer details");
+//PREV                getLayerDetails();
+//PREV            } else {
+//PREV                console.log("callbackFunction: Server parameter is not set. No requirement to check layer details");
+//PREV            }
+
+            //  Initialization now complete. Hide in progress message.
+            $('#progress').css('display', 'none');
+
+            console.log('callbackFunction: Complete. TE4W now fully prepared.');
+
+
+            diagObjects('TerraExplorer.settings.QualityMode', TerraExplorer.settings.QualityMode, 'Set');
+            
+            diagObjects('TerraExplorer.navigate.viewMode.mode', TerraExplorer.navigate.viewMode.mode, 'Read/Set');
+            diagObjects('TerraExplorer.navigate.underground.mode', TerraExplorer.navigate.underground.mode, 'Set');
+            diagObjects('TerraExplorer.navigate.flyAround.startTool', TerraExplorer.navigate.flyAround.startTool, 'Read');
+            diagObjects('TerraExplorer.navigate.flyAround.start', TerraExplorer.navigate.flyAround.start, 'Read');
+
+            diagObjects('TerraExplorer.internal.Units.AltitudeUnit', TerraExplorer.internal.Units.AltitudeUnit, 'Read/Set');
+
+            diagObjects('TerraExplorer.tools.SideBar._isShown', TerraExplorer.tools.SideBar._isShown, 'Set');
+
+            diagObjects('TerraExplorer.analysis.shadow.show', TerraExplorer.analysis.shadow.show, 'Set');
+
+            var countPointClouds = Object.keys(TerraExplorer.layers.pointCloud.items).length;
+            var max = countPointClouds - 1;
+            diagObjects('TerraExplorer.layers.pointCloud.items[0]._object.displayName', TerraExplorer.layers.pointCloud.items[0]._object.displayName, 'Read');
+            diagObjects('TerraExplorer.layers.pointCloud.items['+max+']._object.displayName', TerraExplorer.layers.pointCloud.items[max]._object.displayName, 'Read');
+            diagObjects('TerraExplorer.layers.pointCloud.items[0].options.pointSize', TerraExplorer.layers.pointCloud.items[0].options.pointSize, 'Read');
+            diagObjects('TerraExplorer.layers.pointCloud.items['+max+'].options.pointSize', TerraExplorer.layers.pointCloud.items[max].options.pointSize, 'Read');
+            diagObjects('TerraExplorer.layers.pointCloud.items[0].options.pointSize.defaultValue', TerraExplorer.layers.pointCloud.items[0].options.pointSize.defaultValue, 'Read');
+            diagObjects('TerraExplorer.layers.pointCloud.items['+max+'].options.pointSize.defaultValue', TerraExplorer.layers.pointCloud.items[max].options.pointSize.defaultValue, 'Read');
+
+            diagObjects('TerraExplorer.project.items[0]._object.type', TerraExplorer.project.items[0]._object.type, 'Read');
+            diagObjects('TerraExplorer.project.items[0].show', TerraExplorer.project.items[0].show, 'Set');
+        }
+
+
+
+        function diagObjects(inItemName, inItem, inAccess) {
+            let out = '';
+
+            out += (inItemName + '.'.repeat(80)).substr(0, 75);
+            out += ('  ' + inAccess + ' '.repeat(15)).substr(0, 15);
+            out += "'" + inItem + "'  ";
+
+            console.log(out);
+        }
+
+//PREV        function resizeWindow() {
+//PREV            let visibleScreenHeight;
+//PREV            let requiredContainerHeight;
+//PREV            let layersSidebarHeight;
+//PREV
+//PREV            visibleScreenHeight = window.innerHeight;
+//PREV            requiredContainerHeight = visibleScreenHeight - 85;
+//PREV            $('#mainContainer').css('height', requiredContainerHeight);
+//PREV            $('#mainContainer').css('width', window.innerWidth);
+            //PREV
+//PREV            //  fix required for newer Skyline versions. Without this visible window narrows on first resize and then stays fixed.
+//PREV            $('#cesiumContainer').css('height', '');
+//PREV            $('#cesiumContainer').css('width', '');
+            //PREV
+//PREV            //  If custom laers sidebar is open then resize this as well
+//PREV            if (params['server'] != '' && $('#layers-sidebar').css('width') == '300px') {
+//PREV                layersSidebarHeight = visibleScreenHeight - 87;
+//PREV                $('#layers-sidebar').css('height', layersSidebarHeight);
+//PREV            }
+//PREV        }
+//PREV
+//PREV
+//PREV
+//PREV        //
+//PREV        //    Run from interval timer
+//PREV        //    Monitor for default toolbar icon appearing and hide when found. Halt after 15 seconds whether found or not.
+//PREV        //
+//PREV        function checkToolbar() {
+//PREV            checkToolbarLoopCount++;
+//PREV            if ($('#MenuButtonDiv').css('width') != undefined) {
+//PREV                $('#MenuButtonDiv').css('visibility', 'hidden');
+//PREV                clearInterval(checkToolbarIntervalId);
+//PREV                var elapsedTimeSeconds =  (new Date().getTime() - checkToolbarStartTime) / 1000;
+                //PREVconsole.log("checkToolbar(interval timer): Default toolbar icon found after " + checkToolbarLoopCount + " iterations (" + elapsedTimeSeconds + " seconds). Icon removed and interval timer halted.");
+//PREV            }
+//PREV            if (checkToolbarLoopCount >= 30) {
+//PREV                $('#MenuButtonDiv').css('visibility', 'hidden');
+//PREV                clearInterval(checkToolbarIntervalId);
+//PREV                var elapsedTimeSeconds =  (new Date().getTime() - checkToolbarStartTime) / 1000;
+                //PREVconsole.log("checkToolbar(interval timer): Default toolbar not found after " + checkToolbarLoopCount + " iterations (" + elapsedTimeSeconds + " seconds). Interval timer halted.");
+//PREV            }
+//PREV        }
+//PREV
+//PREV
+//PREV
+//PREV        //
+//PREV        //  Monitor and respond to events
+//PREV        //
+//PREV        $(document).ready(function() {
+//PREV            console.log(">>>>> document.ready running...");
+//PREV
+//PREV            //
+//PREV            //  If the window has been resized then adjust the viewer main container to fit
+//PREV            //
+//PREV            $(window).on('resize', _.debounce(resizeWindow, 100));
+//PREV
+//PREV
+//PREV            //
+//PREV            //  Process any click on a layers menu category heading
+//PREV            //
+//PREV            $('body').on('click', '.layers-menu-category', function() {
+//PREV                var thisId = $(this).attr("id");
+//PREV                var thisIdSelector = '#' + thisId;
+//PREV                var nextId = thisId.replace('-category-', '-group-');
+//PREV                var nextElement = document.getElementById(nextId);
+//PREV                if        (nextElement.style.display == 'block') {
+//PREV                    nextElement.style.display = 'none';
+//PREV                    $(thisIdSelector).html($(thisIdSelector).html().replace('tree_close','tree_open'));
+//PREV                } else if (nextElement.style.display == 'none')  {
+//PREV                    nextElement.style.display = 'block';
+//PREV                    $(thisIdSelector).html($(thisIdSelector).html().replace('tree_open','tree_close'));
+//PREV                }
+//PREV            });
+//PREV
+//PREV
+//PREV            //
+//PREV            //  Process any click on + or - icon (found in any unlocked category) in the custom layers tree menu.
+//PREV            //  Toggle the visibilty of the category in the tree structure.
+//PREV            //
+//PREV            $('body').on('click', '.tree-category-not-locked', function() {
+//PREV                let thisId = $(this).attr("id");
+//PREV                let thisFolderCategory = $(this).attr('category');
+//PREV                if ($('#tree-group-'+thisFolderCategory).hasClass('tree-group-open')) {
+//PREV                    $('#tree-group-'+thisFolderCategory).removeClass('tree-group-open');
+//PREV                    $('#tree-group-'+thisFolderCategory).addClass('tree-group-closed');
+//PREV                    $('#tree-category-image-'+thisFolderCategory).attr('src', './nmg-viewer/img/toolbar/tree_folder_open.png')
+//PREV                } else {
+//PREV                    $('#tree-group-'+thisFolderCategory).removeClass('tree-group-closed');
+//PREV                    $('#tree-group-'+thisFolderCategory).addClass('tree-group-open');
+//PREV                    $('#tree-category-image-'+thisFolderCategory).attr('src', './nmg-viewer/img/toolbar/tree_folder_close.png')
+//PREV                }
+//PREV            });
+//PREV
+//PREV
+//PREV            //
+//PREV            //  Process click on any category heading. This will make all the ancestor layers visible or hidden.
+//PREV            //
+//PREV            $('body').on('click', '.tree-category-name', function() {
+//PREV                let requiredVisibility
+//PREV                let searchClass;
+//PREV                let thisId, thisProjectIndex, thisFolderCategory;
+//PREV
+//PREV                //  Get the required visibility from the clicked layer
+//PREV                thisFolderCategory = $(this).attr('category');
+//PREV                requiredVisibility = $(this).hasClass('tree-category-no-visible-children');
+//PREV
+//PREV                //  Loop through all layers which are ancstors of this one and apply the required visibility
+//PREV                searchClass = ".ancestor-of-" + thisFolderCategory;
+//PREV                $(searchClass).each(function() {
+//PREV                    thisId = $(this).attr('id');
+//PREV                    thisProjectIndex = $(this).attr('project-index');
+//PREV                    TerraExplorer.project.items[thisProjectIndex].show = requiredVisibility;
+//PREV                    if (requiredVisibility) {
+//PREV                        $(this).removeClass('tree-layer-item-hidden');
+//PREV                        $(this).addClass('tree-layer-item-visible');
+//PREV                    } else {
+//PREV                        $(this).removeClass('tree-layer-item-visible');
+//PREV                        $(this).addClass('tree-layer-item-hidden');
+//PREV                    }
+//PREV                });
+//PREV
+//PREV                //  Final reset visibilty indication for all folders
+//PREV                adjustLayersTreeFolderVisibility();
+//PREV            });
+//PREV
+//PREV
+//PREV            //
+//PREV            //  Process a click on a point size adjustment icon in the category heading. Change the point size up or down for
+//PREV            //  any later within this category that has point size adjustment available.
+//PREV            //
+//PREV            $('body').on('click', '.tree-category-point-size', function() {
+//PREV                let thisFolderCategory, thisDirection;
+//PREV                let thisLayerName, thisIndex, pointSize;
+//PREV                let searchClass;
+//PREV
+//PREV                thisFolderCategory  = $(this).attr('category');
+//PREV                thisDirection = $(this).attr('direction');
+//PREV                searchClass = ".child-of-" + thisFolderCategory;
+//PREV
+//PREV                $(searchClass).each(function() {
+//PREV                    thisLayerName = $(this).attr('layer-name');
+//PREV                    thisIndex = $(this).attr('point-cloud-index');
+//PREV
+//PREV                    //  Only work with this layer if it has point size adjustment available
+//PREV                    if (thisIndex != 'undefined') {
+//PREV                        if ($('#tree-layer-plus-'+thisLayerName).length) {
+//PREV
+//PREV                            //  Get current point size from TE. This may be stored in 2 places depnding on it is has already been changed
+//PREV                            pointSize = null;
+//PREV                            if (TerraExplorer.layers.pointCloud.items[thisIndex]) {
+//PREV                                if (TerraExplorer.layers.pointCloud.items[thisIndex].options.pointSize) {
+//PREV                                    if (typeof TerraExplorer.layers.pointCloud.items[thisIndex].options.pointSize == 'number') {
+//PREV                                        pointSize = TerraExplorer.layers.pointCloud.items[thisIndex].options.pointSize;
+//PREV                                    } else if (TerraExplorer.layers.pointCloud.items[thisIndex].options.pointSize.defaultValue) {
+//PREV                                        pointSize = TerraExplorer.layers.pointCloud.items[thisIndex].options.pointSize.defaultValue;
+//PREV                                    }
+//PREV                                }
+//PREV                            } else {
+                                //PREVconsole.log(".tree-category-point-size(click): When processing '"+thisLayerName+"' project index "+thisIndex+" was not found in TerraExplorer.layers.pointCloud.items[]");
+//PREV                            }
+//PREV
+//PREV                            //  If point size was found then adjust up (maximum value 10) or down (minimum value 1)
+//PREV                            if (pointSize) {
+//PREV                                let diag = pointSize;
+//PREV                                pointSize = parseInt(pointSize);
+//PREV                                if (thisDirection == '+' && pointSize < 10)  pointSize = pointSize + 1;
+//PREV                                if (thisDirection == '-' && pointSize > 1)   pointSize = pointSize - 1;
+//PREV                                TerraExplorer.layers.pointCloud.items[thisIndex].setPropValue('pointSize',pointSize);
+//PREV                            }
+//PREV                        } else { 
+//PREV                            console.log(".tree-category-point-size(click): #tree-layer-plus-"+thisLayerName+" does not have class direction");
+//PREV                        }
+//PREV                    } else { 
+//PREV                        console.log(".tree-category-point-size(click): Layer '"+thisLayerName+"' does not have a project index");
+//PREV                    }
+//PREV                });
+//PREV            });
+//PREV
+//PREV
+//PREV            //
+//PREV            //  Process click on a tree layer item. This will toggle the visibility status of the layer.
+//PREV            //
+//PREV            $('body').on('click', '.tree-layer-item', function() {
+//PREV                let categoryToCheck, categoryToCheckNameId, thisFolderCategoryNameId;
+//PREV                let thisIndex     = $(this).attr('project-index');
+//PREV                let thisId        = $(this).attr('id');
+//PREV                let thisLayerName = $(this).attr('layer-name');
+//PREV
+//PREV                //  Toggle the layer visibility and change the display for the name, + and -
+//PREV                if (TerraExplorer.project.items[thisIndex].show == true) {
+//PREV                    TerraExplorer.project.items[thisIndex].show = false;
+//PREV                    $('#tree-layer-'+thisLayerName).removeClass('tree-layer-item-visible');
+//PREV                    $('#tree-layer-'+thisLayerName).addClass('tree-layer-item-hidden');
+//PREV                    $('#tree-layer-plus-'+thisLayerName).removeClass('tree-layer-item-visible');
+//PREV                    $('#tree-layer-plus-'+thisLayerName).addClass('tree-layer-item-hidden');
+//PREV                    $('#tree-layer-minus-'+thisLayerName).removeClass('tree-layer-item-visible');
+//PREV                    $('#tree-layer-minus-'+thisLayerName).addClass('tree-layer-item-hidden');
+//PREV                } else {
+//PREV                    TerraExplorer.project.items[thisIndex].show = true;
+//PREV                    $('#tree-layer-'+thisLayerName).removeClass('tree-layer-item-hidden');
+//PREV                    $('#tree-layer-'+thisLayerName).addClass('tree-layer-item-visible');
+//PREV                    $('#tree-layer-plus-'+thisLayerName).removeClass('tree-layer-item-hidden');
+//PREV                    $('#tree-layer-plus-'+thisLayerName).addClass('tree-layer-item-visible');
+//PREV                    $('#tree-layer-minus-'+thisLayerName).removeClass('tree-layer-item-hidden');
+//PREV                    $('#tree-layer-minus-'+thisLayerName).addClass('tree-layer-item-visible');
+//PREV                }
+//PREV
+//PREV                adjustLayersTreeFolderVisibility();
+//PREV            });
+//PREV
+//PREV
+//PREV            //
+//PREV            //  Process double click on a tree layer item. This will action a flyto to the centroid of the layer.
+//PREV            //
+//PREV            $('body').on('dblclick', '.tree-layer-item', function() {
+//PREV                let thisIndex = $(this).attr('project-index');
+//PREV                console.log("tree-layer-item(dblclick): called with index "+thisIndex);
+//PREV                TerraExplorer.project.items[thisIndex].flyTo();
+//PREV            });
+//PREV
+//PREV
+//PREV            //
+//PREV            //  Process a click on a point size adjustment icon.
+//PREV            //
+//PREV            $('body').on('click', '.tree-layer-point-size', function() {
+//PREV                let thisIndex     = $(this).attr('point-cloud-index');
+//PREV                let thisDirection = $(this).attr('direction');
+//PREV                let pointSize = null;
+                //PREV
+//PREV                //  Get current point size from TE. This may be stored in 2 places depnding on it is has already been changed
+//PREV                if (TerraExplorer.layers.pointCloud.items[thisIndex].options.pointSize) {
+//PREV                    if (typeof TerraExplorer.layers.pointCloud.items[thisIndex].options.pointSize == 'number') {
+//PREV                        pointSize = TerraExplorer.layers.pointCloud.items[thisIndex].options.pointSize;
+//PREV                    } else if (TerraExplorer.layers.pointCloud.items[thisIndex].options.pointSize.defaultValue) {
+//PREV                        pointSize = TerraExplorer.layers.pointCloud.items[thisIndex].options.pointSize.defaultValue;
+//PREV                    }
+//PREV                }
+//PREV
+//PREV                //  If point size was found then adjust up (maximum value 10) or down (minimum value 1)
+//PREV                if (pointSize) {
+//PREV                    if (thisDirection == '+' && pointSize < 10)  pointSize = pointSize + 1;
+//PREV                    if (thisDirection == '-' && pointSize > 1)   pointSize = pointSize - 1;
+//PREV                    TerraExplorer.layers.pointCloud.items[thisIndex].setPropValue('pointSize',pointSize);
+//PREV                }
+//PREV            });
+//PREV
+//PREV
+//PREV            //
+//PREV            //  Process click on #CloseImg, this occurs when closing either the query tool or the distance tool
+//PREV            //
+//PREV            $('body').on('click', '#CloseImg', function () {
+//PREV                document.getElementById("toolbar-button-distance").className="toolbar-button-inactive";
+//PREV                document.getElementById("toolbar-button-query").className="toolbar-button-inactive";
+//PREV            });
+//PREV
+//PREV
+//PREV            //
+//PREV            //  Process click on search button in sidebar, or enter on search input box
+//PREV            //
+//PREV            $('body').on('click', '#search-button', function() {
+//PREV                var searchInput = $('#search-input').val();
+//PREV                if (searchInput != "") {
+//PREV                    $('#search-sidebar-results').empty();
+//PREV                    var generatedHtml = getSearchReturns(searchInput);
+//PREV                    $('#search-sidebar-results').append(generatedHtml);
+//PREV                }
+//PREV            });
+//PREV            $("body").on('keypress', '#search-input', function(e) {
+//PREV                if(e.which == 13) {
+//PREV                    var searchInput = $('#search-input').val();
+//PREV                    if (searchInput != "") {
+//PREV                        $('#search-sidebar-results').empty();
+//PREV                        var generatedHtml = getSearchReturns(searchInput);
+//PREV                        $('#search-sidebar-results').append(generatedHtml);
+//PREV                    }
+//PREV                }
+//PREV            });
+//PREV
+//PREV
+//PREV            //
+//PREV            //  Process click on a returned location value in the search sidebar
+//PREV            //
+//PREV            $('body').on('click', '.search-sidebar-results-location', function() {
+//PREV                var lat  = $(this).attr('lat');
+//PREV                var lng  = $(this).attr('lng');
+//PREV                var area = $(this).attr('area');
+//PREV                flyToLngLat(lng, lat, area);
+//PREV            });
+//PREV
+//PREV
+//PREV            //
+//PREV            //  Process point size adjustments
+//PREV            //
+//PREV            $('body').on('click', '.point-size-adjustment', function() {
+//PREV                var thisLayer = $(this).attr('point-cloud-layer');
+//PREV                var thisDirection = $(this).attr('direction');
+//PREV                var pointSize = null;
+//PREV                if (TerraExplorer.layers.pointCloud.items[thisLayer].options.pointSize) {
+//PREV                    if (typeof TerraExplorer.layers.pointCloud.items[thisLayer].options.pointSize == 'number') {
+//PREV                        pointSize = TerraExplorer.layers.pointCloud.items[thisLayer].options.pointSize;
+//PREV                        console.log(".point-size-adjustment(click): Current value " + pointSize + " found from layers.pointCloud.items[] options.pointSize");
+//PREV                    } else if (TerraExplorer.layers.pointCloud.items[thisLayer].options.pointSize.defaultValue) {
+//PREV                        pointSize = TerraExplorer.layers.pointCloud.items[thisLayer].options.pointSize.defaultValue;
+//PREV                        console.log(".point-size-adjustment(click): Current value " + pointSize + " found from layers.pointCloud.items[] options.pointSize.defaultValue");
+//PREV                    } else {
+//PREV                        pointSize = 5;
+//PREV                        console.log(".point-size-adjustment(click): Current value not found. Will default to 5");
+//PREV                    }
+//PREV                }
+//PREV                if (pointSize) {
+//PREV                    if (thisDirection == '+' && pointSize < 10)  pointSize = pointSize + 1;
+//PREV                    if (thisDirection == '-' && pointSize > 1)   pointSize = pointSize - 1;
+//PREV                    TerraExplorer.layers.pointCloud.items[thisLayer].setPropValue('pointSize',pointSize);
+//PREV                }
+//PREV                console.log("New point size is " + pointSize);
+//PREV            });
+//PREV
+//PREV            //
+//PREV            //  Close modal window
+//PREV            //
+//PREV            $(document).on('click', '.show-errors-modal-close', function() {
+//PREV                $('#show-errors-modal').removeClass('show');
+//PREV                $('#show-errors-modal').css('display', 'none');
+//PREV            });
+//PREV        });
+//PREV
+//PREV
+//PREV
+//PREV        function set2dMode() {
+//PREV            //
+//PREV            //  Set 2D mode through API
+//PREV            //  Display 2D button as active, 3D as inactive
+//PREV            //
+//PREV            try {
+//PREV                TerraExplorer.navigate.viewMode.mode = TerraExplorer.ViewMode._2D;
+//PREV                document.getElementById("toolbar-button-3d").className="toolbar-button-inactive";
+//PREV                document.getElementById("toolbar-button-2d").className="toolbar-button-active";
+//PREV            } catch(err) { 
+//PREV                logError(err, "set2dMode");
+//PREV            }
+//PREV        }
+//PREV
+//PREV
+//PREV
+//PREV        function set3dMode() {
+//PREV            //
+//PREV            //  Set 3D mode through API
+//PREV            //  Display 3D button as active, 2D as inactive
+//PREV            //
+//PREV            try {
+//PREV                TerraExplorer.navigate.viewMode.mode = TerraExplorer.ViewMode._3D;
+//PREV                document.getElementById("toolbar-button-3d").className="toolbar-button-active";
+//PREV                document.getElementById("toolbar-button-2d").className="toolbar-button-inactive";
+//PREV            } catch(err) { 
+//PREV                logError(err, "set3dMode");
+//PREV            }
+//PREV        }
+//PREV
+//PREV
+//PREV
+//PREV        function startDistanceTool() {
+//PREV            //
+//PREV            //  Start distance tool through API
+//PREV            //  Set button to active, also set query tool button to inactive
+//PREV            //
+//PREV            try {
+//PREV                TerraExplorer.analysis.distance.startTool();
+//PREV                document.getElementById("toolbar-button-distance").className="toolbar-button-active";
+//PREV                document.getElementById("toolbar-button-query").className="toolbar-button-inactive";
+//PREV            } catch(err) { 
+//PREV                logError(err, "startDistanceTool");
+//PREV            }
+//PREV        }
+//PREV
+//PREV
+//PREV
+//PREV        function startQueryTool() {
+//PREV            //
+//PREV            //  Start query tool through API
+//PREV            //  Set button to active, also set ditance tool button to inactive
+//PREV            //
+//PREV            try {
+//PREV                TerraExplorer.analysis.query.startTool();
+//PREV                document.getElementById("toolbar-button-distance").className="toolbar-button-inactive";
+//PREV                document.getElementById("toolbar-button-query").className="toolbar-button-active";
+//PREV            } catch(err) { 
+//PREV                logError(err, "startQueryTool");
+//PREV            }
+//PREV        }
+//PREV
+//PREV
+//PREV
+//PREV        function setDistanceUnits(inValue) {
+//PREV            //
+//PREV            // Change measurement units through API and set buttons to active/inactive as applicable
+//PREV            // This logic assumes that the select value is set to 0 for metric and 1 for imperial 
+//PREV            //
+//PREV            try {
+//PREV                TerraExplorer.internal.Units.AltitudeUnit = inValue;
+//PREV                if (inValue == 0) {
+//PREV                    document.getElementById("toolbar-button-metric").className = "toolbar-button-active";
+//PREV                    document.getElementById("toolbar-button-imperial").className = "toolbar-button-inactive";
+//PREV                } else {
+//PREV                    document.getElementById("toolbar-button-imperial").className = "toolbar-button-active";
+//PREV                    document.getElementById("toolbar-button-metric").className = "toolbar-button-inactive";
+//PREV                }
+//PREV            } catch(err) { 
+//PREV                logError(err, "setDistanceUnits");
+//PREV            }
+//PREV        }
+//PREV
+//PREV
+//PREV
+//PREV        function toggleShadowMode() {
+//PREV            //
+//PREV            //  Toggle shadow mode through API. Set button active/inactive to indicate current status
+//PREV            //
+//PREV            try {
+//PREV                if ( TerraExplorer.analysis.shadow.show == true ) {
+//PREV                    document.getElementById("toolbar-button-shadows").className="toolbar-button-inactive";
+//PREV                    TerraExplorer.analysis.shadow.show = false;
+//PREV                } else {
+//PREV                    document.getElementById("toolbar-button-shadows").className="toolbar-button-active";
+//PREV                    TerraExplorer.analysis.shadow.show = true;
+//PREV                }
+//PREV            } catch(err) { 
+//PREV                logError(err, "toggleShadowMode");
+//PREV            }
+//PREV        }
+//PREV
+//PREV
+//PREV
+//PREV        function toggleUndergroundMode() {
+//PREV            //
+//PREV            //  Toggle underground mode through API. Set button active/inactive to indicate current status
+//PREV            //
+//PREV            try {
+//PREV                if ( TerraExplorer.navigate.underground.mode == true ) {
+//PREV                    document.getElementById("toolbar-button-underground").className="toolbar-button-inactive";
+//PREV                    TerraExplorer.navigate.underground.mode = false;
+//PREV                } else {
+//PREV                    document.getElementById("toolbar-button-underground").className="toolbar-button-active";
+//PREV                    TerraExplorer.navigate.underground.mode = true;
+//PREV                }
+//PREV            } catch(err) { 
+//PREV                logError(err, "toggleUndergroundMode");
+//PREV            }
+//PREV        }
+//PREV
+//PREV
+//PREV
+//PREV        function toggleLayersSidebar() {
+//PREV            //
+//PREV            //  Determine which layers sidebar logic to use dependant on whether te4w isolation
+//PREV            //  has been specified. If so then use the new logic which interogates project details
+//PREV            //  xml to allow a custom layout, else use the previous version which uses the default
+//PREV            //  layer details from TerraTerraExplorer.project.items
+//PREV            //
+//PREV            if (params['server'] != '') {
+//PREV                toggleLayersSidebarCustom();
+//PREV            } else {
+//PREV                toggleLayersSidebarDefault();
+//PREV            }
+//PREV        }
+//PREV
+//PREV
+//PREV
+//PREV        function toggleLayersSidebarDefault() {
+//PREV            //
+//PREV            //  Toggle layers display
+//PREV            //  If layers currently visible (checked from button class)
+//PREV            //      Hide layers window, set button display to inactive
+//PREV            //  Else
+//PREV            //      Get current layers details and hold in array
+//PREV            //      Generate tree structure from collected details and load to sidebar
+//PREV            //      Finally make sidebar visible, after ensuring that height is pegged to the height of the visible window (less toolbar)
+//PREV            //
+//PREV            try {
+//PREV                var thisDisplayName = "";
+//PREV                var thisFolderCategory = "";
+//PREV                var thisType = "";
+//PREV                var thisName = "";
+//PREV                var thisShow = "";
+//PREV                var thisVisibility = "";
+//PREV                var thisPointSize = "";
+//PREV                var initColour = "";
+//PREV                var i = 0;
+//PREV                var endFlag = false;
+//PREV                var layersArr = [];
+//PREV
+//PREV                //  If layers sidebar is currently open then close and exit
+//PREV                if (document.getElementById("toolbar-button-layers").className == "toolbar-button-active") {
+//PREV                    document.getElementById("toolbar-button-layers").className = "toolbar-button-inactive";
+//PREV                    $('#layers-sidebar-content-default').empty();
+//PREV                    $('#layers-sidebar').css('width', '0px');
+//PREV                    $('#layers-sidebar').css('border-right', 'none');
+//PREV                    return;
+//PREV                }
+//PREV
+//PREV
+//PREV                //
+//PREV                //  Build an array containing the names of layers which have adjustable point sizes
+//PREV                //
+//PREV                var item;
+//PREV                var layersWithPointSize = [];
+//PREV                var thisDisplayName;
+//PREV                var ThisCurrentPointSize;
+//PREV                var countPointClouds = Object.keys(TerraExplorer.layers.pointCloud.items).length;
+//PREV
+//PREV                for (i=0 ; i < countPointClouds ; i++) {
+//PREV                    item = TerraExplorer.layers.pointCloud.items[i];
+//PREV                    thisDisplayName = TerraExplorer.layers.pointCloud.items[i]._object.displayName;
+//PREV                    if (TerraExplorer.layers.pointCloud.items[i].options) { 
+//PREV                        if (TerraExplorer.layers.pointCloud.items[i].options.pointSize) {
+//PREV                            if (typeof TerraExplorer.layers.pointCloud.items[i].options.pointSize == 'number') {
+//PREV                                layersWithPointSize[thisDisplayName] = i;
+//PREV                            } else if (TerraExplorer.layers.pointCloud.items[i].options.pointSize.defaultValue) {
+//PREV                                ThisCurrentPointSize = TerraExplorer.layers.pointCloud.items[i].options.pointSize.defaultValue;
+//PREV                                layersWithPointSize[thisDisplayName] = i;
+//PREV                            }
+//PREV                        }
+//PREV                    }
+//PREV                }
+//PREV
+//PREV
+//PREV                //  Menu is currently closed.
+//PREV                //  Build up an array of objects to hold the details for all layers to be displayed, including a category derived fromm the layer type
+//PREV                i = 0;
+//PREV                endFlag = false;
+//PREV                do {
+//PREV                    if (TerraExplorer.project.items[i] != undefined) { 
+//PREV                        thisDisplayName = TerraExplorer.project.items[i]['_object']['displayName'];
+//PREV                        thisType = TerraExplorer.project.items[i]['_object']['type'];
+//PREV                        thisName = TerraExplorer.project.items[i]['_object']['name'];
+//PREV                        thisShow = (TerraExplorer.project.items[i].show === true);
+//PREV                        thisPointSize = null;
+//PREV                        if (layersWithPointSize[thisDisplayName]) {
+//PREV                            thisPointSize = layersWithPointSize[thisDisplayName];
+//PREV                        }
+//PREV
+//PREV                        if        (thisType == 'imagery' && thisName == 'OnTerraWMS') {
+//PREV                            layersArr.push({category:'Base Imagery', name:thisDisplayName, pointsize:thisPointSize, visible:thisShow});
+//PREV                        } else if (thisType == 'imagery') {
+//PREV                            layersArr.push({category:'Survey Imagery', name:thisDisplayName, pointsize:thisPointSize, visible:thisShow});
+//PREV                        } else if (thisType == 'FeatureLine' || thisType == 'FeaturePoint') {
+//PREV                            layersArr.push({category:'Features', name:thisDisplayName, pointsize:thisPointSize, visible:thisShow});
+//PREV                        } else if (thisType == 'FeaturePolygon') {
+//PREV                            layersArr.push({ category:'Analysis', name:thisDisplayName, pointsize:thisPointSize, visible:thisShow });
+//PREV                        } else if (thisType == 'cpt') {
+//PREV                            layersArr.push({category:'LiDAR', name:thisDisplayName, pointsize:thisPointSize, visible:thisShow});
+//PREV                        } else if (thisType == 'distance') {
+//PREV                            //  Ignore here, any old saved distances should have been hidden at start up 
+//PREV                        } else {
+//PREV                            console.log("Layers scan found unexpected type '" + thisType + "', '" + thisName + "' in TerraExplorer.project.items[" + i + "]['_object']['type']");
+//PREV                        }
+//PREV                        i++;
+//PREV                    } else { 
+//PREV                        endFlag = true; 
+//PREV                    }
+//PREV                } while (endFlag == false);
+//PREV
+//PREV                //
+//PREV                //  Generate the menu structure from the array generated above. 
+//PREV                //    This will support collapse/expand logic on all category headings
+//PREV                //    Also 
+//PREV                $('#layers-sidebar-content-default').empty();
+//PREV                var idNameCategory;
+//PREV                var lastCategory = "****";
+//PREV                var generatedHTML = "";
+//PREV                var layersArrLen = layersArr.length;
+//PREV                for (i=0 ; i<layersArrLen ; i++) {
+//PREV                    thisFolderCategory    = layersArr[i]['category'];
+//PREV                    thisName        = layersArr[i]['name']
+//PREV                    thisVisibility  = layersArr[i]['visible']
+//PREV                    initColour = "grey";
+//PREV                    if (thisVisibility == true) { 
+//PREV                        initColour = 'white';
+//PREV                    }
+//PREV                    if (thisFolderCategory != lastCategory) {
+//PREV                        if (lastCategory != "****") {
+//PREV                            generatedHTML = generatedHTML + "</div>  <!--  /layers-menu-group  -->";
+//PREV                        }
+//PREV                        idNameCategory = thisFolderCategory.replace(" ","-").toLowerCase();
+                        //PREVgeneratedHTML = generatedHTML + "<div id='layers-menu-category-" + idNameCategory + "' class='layers-menu-category'><img src='./nmg-viewer/img/toolbar/tree_close.png'>&nbsp;&nbsp" + thisFolderCategory + "</div>";
+//PREV                        generatedHTML = generatedHTML + "<div id='layers-menu-group-" + idNameCategory + "' class='layers-menu-group' style='display: block'>";
+//PREV                }
+                    //PREVgeneratedHTML = generatedHTML + "<div id='display-layer-" + i + "' class='layers-menu-item' style='color: " + initColour + "; display: inline-block' onclick='toggleLayerVisibility(" + i + ")' ondblclick='flyToLayer(" + i + ")'>" + thisName + " </div>";
+//PREV                    if (layersWithPointSize[thisName] != null) {
+                        //PREVgeneratedHTML = generatedHTML + "<div id='display-layer-minus-"+i+"' class='point-size-adjustment' point-cloud-layer= " + layersWithPointSize[thisName] + " direction='-' style='display: inline-block; width: 12px; text-align-center; cursor: pointer'>-</div>";
+//PREV                        generatedHTML = generatedHTML + "<div style='display: inline-block; width: 5px'></div>";
+                        //PREVgeneratedHTML = generatedHTML + "<div id='display-layer-plus-"+i+"' class='point-size-adjustment' point-cloud-layer= " + layersWithPointSize[thisName] + " direction='+' style='display: inline-block; width: 12px; text-align-center; cursor: pointer'>+</div>";
+//PREV                    }
+//PREV                    lastCategory = thisFolderCategory;
+//PREV                }
+//PREV                generatedHTML = generatedHTML + "</div>  <!--  /layers-menu-group  LAST  -->";
+//PREV                $('#layers-sidebar-content-default').append(generatedHTML);
+//PREV
+//PREV                //  If search sidebar is active then remove, else move main container right by half sidebar width (to ensure cross is always the centre of the visible area)
+//PREV                if (document.getElementById("toolbar-button-search").className == "toolbar-button-active") {
+//PREV                    document.getElementById("toolbar-button-search").className = "toolbar-button-inactive";
+//PREV                    $('#search-sidebar').css('width', '0px');
+//PREV                    $('#search-sidebar').css('border-right', 'none');
+//PREV                }
+//PREV
+//PREV                //  Make layers sidebar visible
+//PREV                document.getElementById("toolbar-button-layers").className = "toolbar-button-active";
+//PREV                $('#layers-sidebar').css('width', '300px');
+//PREV                $('#layers-sidebar').css('border-right', '1px solid #8dc75a');
+//PREV                var visibleScreenHeight = window.innerHeight;
+//PREV                var layersSidebarHeight = visibleScreenHeight - 87;
+//PREV                $('#layers-sidebar').css('height', layersSidebarHeight);
+//PREV                return;
+//PREV            } catch(err) { 
+//PREV                logError(err, "toggleLayersSidebarDefault");
+//PREV            }
+//PREV        }
+//PREV
+//PREV
+//PREV
+//PREV        function toggleLayersSidebarCustom() {
+//PREV            //
+//PREV            //  Toggle layers display
+//PREV            //  If layers currently visible (checked from button class)
+//PREV            //      Hide layers window, set button display to inactive
+//PREV            //  Else
+//PREV            //      Get current layers details and hold in array
+//PREV            //      Generate tree structure from collected details and load to sidebar
+//PREV            //      Finally make sidebar visible, after ensuring that height is pegged to the height of the visible window (less toolbar)
+//PREV            //
+//PREV            let thisLevel, thisLabel, thisId, thisStatus, thisPointSize, thisIndex, thisPointCloudIndex, thisShow, thisClassVisible;
+//PREV            let derivedClassLockStatus, derivedCategoryImage, derivedClassVisibility;
+//PREV            let currentCategoryLevel, currentCategoryId;
+//PREV            let ancestorClasses, subCategoryClasses;
+//PREV            let categoriesWithPointSizeAdjustment = [];               
+//PREV            let ancestorOf = [];
+//PREV            let generatedCustomHTML = '';
+//PREV            let currentLevel = -1;
+//PREV            try {
+//PREV                //  If layers sidebar is currently open then close and exit
+//PREV                if (document.getElementById("toolbar-button-layers").className == "toolbar-button-active") {
+//PREV                    document.getElementById("toolbar-button-layers").className = "toolbar-button-inactive";
+//PREV                    $('#layers-sidebar-content-default').empty();
+//PREV                    $('#layers-sidebar').css('width', '0px');
+//PREV                    $('#layers-sidebar').css('border-right', 'none');
+//PREV                    return;
+//PREV                }
+//PREV
+//PREV                //  If the search sidebar is currently active then remove it
+//PREV                if (document.getElementById("toolbar-button-search").className == "toolbar-button-active") {
+//PREV                    document.getElementById("toolbar-button-search").className = "toolbar-button-inactive";
+//PREV                    $('#search-sidebar').css('width', '0px');
+//PREV                    $('#search-sidebar').css('border-right', 'none');
+//PREV                }
+//PREV
+//PREV                //  If the tree structure html has not previously been created then do it now
+//PREV                if ($('#layers-sidebar-content-custom').text().trim() == '') {
+//PREV                    let folderCount = 0;                    
+//PREV                    let currentLevel = -1;
+//PREV                    const entries = Object.entries(glbProcessedElementsList);
+//PREV                    for (const [key,processedElement] of entries) {
+//PREV                        if (processedElement.elementType == 'folder') {
+//PREV                            folderCount++;                        
+//PREV                            thisLevel = processedElement.level;
+//PREV                            thisLabel = processedElement.label;
+//PREV                            thisId = sanitiseName(thisLabel) + "-" + ("0"+folderCount).substr(-2);
+//PREV                            thisStatus = processedElement.status;
+//PREV                            derivedClassLockStatus = (thisStatus == 'locked') ? '' : 'tree-category-not-locked';
+//PREV                            derivedCategoryImage = (thisStatus == 'locked') ? 'tree_folder_locked.png' : (thisStatus == 'open') ? 'tree_folder_close.png' : 'tree_folder_open.png';
+//PREV                            derivedClassVisibility = (thisStatus == 'open') ? 'open' : 'closed';
+//PREV                            currentCategoryLevel = thisLevel;
+//PREV                            currentCategoryId = thisId;
+//PREV                            subCategoryClasses = "";
+//PREV                            ancestorOf[thisLevel] = thisId;                         
+//PREV                            for (var i=2 ; i<=thisLevel ; i++) {
+//PREV                                subCategoryClasses += "subcategory-of-"+ancestorOf[i]+" ";
+//PREV                            }
+//PREV
+//PREV                            generatedCustomHTML += "<div id='tree-category-"+thisId+"' class='tree-category tree-category-level-"+thisLevel+" "+subCategoryClasses+"'>";
+                            //PREVgeneratedCustomHTML += "<img id='tree-category-image-"+thisId+"' class='tree-category-image tree-category-image-level-"+thisLevel+" "+derivedClassLockStatus+"' category='"+thisId+"' src='./nmg-viewer/img/toolbar/"+derivedCategoryImage+"'>";
+                            //PREVgeneratedCustomHTML += "<div id='tree-category-name-"+thisId+"' class='tree-category-name tree-category-name-level-"+thisLevel+" tree-category-no-visible-children' category='"+thisId+"'>"+thisLabel+"</div>";
+                            //PREVgeneratedCustomHTML += "<div id='tree-category-minus-"+thisId+"' class='tree-category-point-size tree-category-point-size-minus tree-category-point-size-hidden tree-category-no-visible-children' category='"+thisId+"' direction='-'>-</div>";
+                            //PREVgeneratedCustomHTML += "<div id='tree-category-plus-"+thisId+"' class='tree-category-point-size tree-category-point-size-hidden tree-category-no-visible-children' category='"+thisId+"' direction='+'>+</div>";                            
+//PREV                            generatedCustomHTML += "</div>";
+//PREV                            generatedCustomHTML += "<div id='tree-group-"+thisId+"' class='tree-group tree-group-level-"+thisLevel+" tree-group-"+derivedClassVisibility+"'>";
+                            //PREV
+//PREV                            currentLevel = thisLevel;
+//PREV                        } else if (processedElement.elementType == 'layer') {
+//PREV                            thisId               = processedElement.id;
+//PREV                            thisLevel            = currentCategoryLevel;
+//PREV                            thisLabel            = processedElement.label;
+//PREV                            thisPointSize        = processedElement.pointSize;
+//PREV                            thisIndex            = processedElement.projectIndex;
+//PREV                            thisPointCloudIndex  = processedElement.pointCloudIndex;
+//PREV                            thisShow             = processedElement.show;
+//PREV                            thisClassVisible     = (processedElement.show) ? 'tree-layer-item-visible' : 'tree-layer-item-hidden';
+//PREV                            ancestorClasses = "";
+//PREV                            for (var i=1 ; i<=thisLevel ; i++) {  //  i=2
+//PREV                                ancestorClasses += "ancestor-of-"+ancestorOf[i]+" ";
+//PREV                            }
+//PREV
+                            //PREVgeneratedCustomHTML += "<div id='tree-layer-"+thisId+"' class='tree-layer-item tree-layer-item-level-"+thisLevel+" "+thisClassVisible+" child-of-"+currentCategoryId+" "+ancestorClasses+"' layer-name='"+thisId+"' project-index="+thisIndex+" point-cloud-index="+thisPointCloudIndex+" child-of='"+currentCategoryId+"'>"+thisLabel+"</div>";
+//PREV                            if (processedElement.pointSize) {
+                                //PREVgeneratedCustomHTML += "<div id='tree-layer-minus-"+thisId+"' class='tree-layer-point-size tree-layer-item-visible' project-index="+thisIndex+" point-cloud-index="+thisPointCloudIndex+" direction='-'>-</div>";
+                                //PREVgeneratedCustomHTML += "<div id='tree-layer-plus-"+thisId+"' class='tree-layer-point-size tree-layer-item-visible' project-index="+thisIndex+" point-cloud-index="+thisPointCloudIndex+" direction='+'>+</div>";
+//PREV                                categoriesWithPointSizeAdjustment[currentCategoryId] = 'Y';                                
+//PREV                            }
+//PREV                        } else if (processedElement.elementType == 'folder-end') {
+//PREV                            thisLevel = thisLevel - 1;
+//PREV                            currentCategoryLevel = thisLevel;
+//PREV                            if (thisLevel > 1) {
+//PREV                                currentCategoryId = ancestorOf[thisLevel];
+//PREV                            } else {
+//PREV                                currentCategoryId = '';
+//PREV                            }
+//PREV                            generatedCustomHTML += "</div>";
+//PREV                        }
+//PREV                    }
+//PREV
+//PREV                    $('#layers-sidebar-content-custom').append(generatedCustomHTML);
+//PREV                } else {
+//PREV                    $('#layers-sidebar-content-custom').append("<br>--");
+//PREV                }
+//PREV
+//PREV                //  Point size adjustment icons were set for every category when created, but set to hidden. Now the tree is open set all
+//PREV                //  for categories marked as having point size adjutable layers to visible.
+//PREV                const entries = Object.entries(categoriesWithPointSizeAdjustment);
+//PREV                for (const [key, value] of entries) {
+//PREV                    $('#tree-category-minus-'+key).removeClass('tree-category-point-size-hidden');
+//PREV                    $('#tree-category-plus-'+key).removeClass('tree-category-point-size-hidden');
+//PREV                }
+//PREV
+//PREV                //  Update the visibility of each folder to reflect the status of all its ancestor layers
+//PREV                adjustLayersTreeFolderVisibility();
+//PREV
+//PREV                //  Make the layers sidebar visible, with the height set to match to the visible screen area
+//PREV                document.getElementById("toolbar-button-layers").className = "toolbar-button-active";
+//PREV                $('#layers-sidebar').css('width', '300px');
+//PREV                $('#layers-sidebar').css('border-right', '1px solid #8dc75a');
+//PREV                var visibleScreenHeight = window.innerHeight;
+//PREV                var layersSidebarHeight = visibleScreenHeight - 87;
+//PREV                $('#layers-sidebar').css('height', layersSidebarHeight);
+//PREV
+//PREV                return;
+//PREV            } catch(err) { 
+//PREV                logError(err, "toggleLayersSidebarCustom");
+//PREV            }
+//PREV
+//PREV        }
+//PREV
+//PREV
+//PREV
+//PREV        function toggleSearchSidebar() {
+//PREV            //
+//PREV            //  Hide or show search sidebar. If showing, and layers sidebar is currently showing, then hide it first
+//PREV            //
+//PREV            try {
+//PREV                //  If search sidebar is currently open then close and exit
+//PREV                if (document.getElementById("toolbar-button-search").className == "toolbar-button-active") {
+//PREV                    document.getElementById("toolbar-button-search").className = "toolbar-button-inactive";
+//PREV                    $('#search-sidebar-content').empty();
+//PREV                    $('#search-sidebar').css('width', '0px');
+//PREV                    $('#search-sidebar').css('border-right', 'none');
+//PREV                    return;
+//PREV                }
+//PREV
+//PREV                //  If layers sidebar was active then remove, else move main container right by half sidebar width (to ensure cross is always the centre of the visible area)
+//PREV                if (document.getElementById("toolbar-button-layers").className == "toolbar-button-active") {
+//PREV                    document.getElementById("toolbar-button-layers").className = "toolbar-button-inactive";
+//PREV                    $('#layers-sidebar').css('width', '0px');
+//PREV                    $('#layers-sidebar').css('border-right', 'none');
+//PREV                }
+//PREV
+//PREV                //  Make search sidebar visible
+//PREV                $('#search-input').val('');
+//PREV                $('#search-sidebar-results').empty();
+//PREV                $('#search-sidebar').css('width', '300px');
+//PREV                $('#search-sidebar').css('border-right', '1px solid #8dc75a');
+//PREV                document.getElementById("toolbar-button-search").className = "toolbar-button-active";
+//PREV
+//PREV                return;
+//PREV            } catch(err) { 
+//PREV                logError(err, "toggleSearchSidebar");
+//PREV            }
+//PREV        }
+//PREV
+//PREV
+//PREV
+//PREV        function openStreetview() {
+//PREV            //
+//PREV            //  Calculate the lat/lng of the centre cross in the viewer, using logic which will support both 2D and 3D modes.
+//PREV            //  Use these coordinates to open a separate window to google street view.
+//PREV            //
+//PREV            try {
+//PREV                var windowPosition = new Cesium.Cartesian2(viewer.container.clientWidth / 2, viewer.container.clientHeight / 2);
+//PREV                var pickRay = viewer.scene.camera.getPickRay(windowPosition);
+//PREV                var pickPosition = viewer.scene.globe.pick(pickRay, viewer.scene);
+//PREV                var pickPositionCartographic = viewer.scene.globe.ellipsoid.cartesianToCartographic(pickPosition);
+//PREV                var cameraLat = pickPositionCartographic.latitude * (180 / Math.PI);
+//PREV                var cameraLng = pickPositionCartographic.longitude * (180 / Math.PI);
+//PREV                var url = "http://maps.google.com/maps?q=&layer=c&cbll=" + cameraLat + "," + cameraLng;
+//PREV                window.open(url);
+//PREV            } catch(err) { 
+//PREV                logError(err, "openStreetview");
+//PREV            }
+//PREV        }
+//PREV
+//PREV
+//PREV
+//PREV        function toggleFlyAroundMode() {
+//PREV            //
+//PREV            //  Start and stop the fly around tool. This includes logic for release 7.2.1 and for 7.2.3+, which use different commands
+//PREV            //  start / startTool is used as a toggle because stop() and isActive() do not work reliably!
+//PREV            //  NB: button active/inactive is not set here, because clicking North will stop the tool, but with no ability to clear the active class
+//PREV            //
+//PREV            try {
+//PREV                if (TerraExplorer.navigate.flyAround.startTool) {
+//PREV                    TerraExplorer.navigate.flyAround.startTool();
+//PREV                } else if (TerraExplorer.navigate.flyAround.start) {
+//PREV                    TerraExplorer.navigate.flyAround.start();
+//PREV                }
+//PREV            } catch(err) { 
+//PREV                logError(err, "toggleFlyAroundMode");
+//PREV            }
+//PREV        }
+//PREV
+//PREV
+//PREV
+//PREV        function toggleLayerVisibility(inLayer) {
+//PREV            console.log("toggleLayerVisibility called with " + inLayer);
+//PREV            try {
+//PREV                if (TerraExplorer.project.items[inLayer].show == true) {
+//PREV                    TerraExplorer.project.items[inLayer].show = false;
+//PREV                    document.getElementById("display-layer-" + inLayer).style.color="grey";  //  EXPAND TO INCLUDE +/-
+//PREV                    $("#display-layer-minus-" + inLayer).css("color", "grey");
+//PREV                    $("#display-layer-plus-" + inLayer).css("color", "grey");
+//PREV                } else {
+//PREV                    TerraExplorer.project.items[inLayer].show = true;
+//PREV                    $("#display-layer-" + inLayer).css("color", "white");
+//PREV                    $("#display-layer-minus-" + inLayer).css("color", "white");
+//PREV                    $("#display-layer-plus-" + inLayer).css("color", "white");
+//PREV                }
+//PREV            } catch(err) { 
+//PREV                logError(err, "toggleLayerVisibility");
+//PREV            }
+//PREV        }
+//PREV
+//PREV
+//PREV        function flyToLayer(inLayer) {
+//PREV            console.log("flyToLayer called with " + inLayer);
+//PREV            //
+//PREV            //  Fly to the centre location of a layer, by layer index
+//PREV            //  If the layer does not hold the coordinates to fly to then an error message of 'this._root is undefined' will be returned
+//PREV            //
+//PREV            try {
+//PREV                TerraExplorer.project.items[inLayer].flyTo();
+//PREV            } catch(err) {
+//PREV                logError(err, "flyToLayer");
+//PREV            }
+//PREV        }
+//PREV
+//PREV
+//PREV
+//PREV        function flyToLngLat(inLng, inLat, inArea, inHeight) {
+//PREV            //
+//PREV            //  Fly to using latitude and longitude. 
+//PREV            //  For POINT the camera height will be the passed height + 800m
+//PREV            //  For others the camera height is determined from the area type.
+//PREV            //  If camera height is still zero (when POINT was passed from 2D data) then use the ground height for the current lat lng
+//PREV            //
+//PREV            try {
+//PREV
+//PREV                var featureHeight = Number(inHeight);
+//PREV                if (featureHeight == 1700) { featureHeight = 0; }  //  Fix to remove default value which can current be passed from Caydence for 2D features
+//PREV
+//PREV                var cameraHeight = 0;
+//PREV                if      (inArea == "POINT")    { if (featureHeight != 0) { cameraHeight = featureHeight + 800; } }
+//PREV                else if (inArea == "ZIP")      { cameraHeight =    3000; }
+//PREV                else if (inArea == "STREET")   { cameraHeight =    3000; }
+//PREV                else if (inArea == "CITY")     { cameraHeight =   25000; }
+//PREV                else if (inArea == "COUNTY")   { cameraHeight =  100000; }
+//PREV                else if (inArea == "STATE")    { cameraHeight = 2000000; }
+//PREV
+//PREV                if (cameraHeight > 0) {
+//PREV                    console.log("flyToLngLat: input of ("+inLng+", "+inLat+", "+inArea+", "+inHeight+") will fly to height " + cameraHeight+"m");
+//PREV                    viewer.camera.flyTo({ destination: new Cesium.Cartesian3.fromDegrees(inLng, inLat, cameraHeight)});
+//PREV                } else {
+//PREV                    console.log("flyToLngLat: input of ("+inLng+", "+inLat+", "+inArea+", "+inHeight+") will calculate height from Cesium");
+//PREV                    var latlon = Cesium.Cartographic.fromDegrees(inLng, inLat);
+//PREV                    TerraExplorer.functions.queryBestLevel(latlon).then(function(l){
+//PREV                        Cesium.sampleTerrain(viewer.terrainProvider,l,[latlon]).then(function(bestPositions){ 
+//PREV                            var heightToFlyTo = bestPositions[0].height + 800;
+//PREV                            console.log("flyToLngLat:   Terrain height is "+bestPositions[0].height+"m, will fly to "+heightToFlyTo+"m");
+//PREV                            viewer.camera.flyTo({ destination: new Cesium.Cartesian3.fromDegrees(inLng, inLat, heightToFlyTo)});
+//PREV                        })
+//PREV                    });
+//PREV                } 
+//PREV            } catch(err) {
+//PREV                logError(err, "flyToLngLat");
+//PREV            }
+//PREV        }
+//PREV
+//PREV
+//PREV
+//PREV        function getSearchReturns(inSearchInput) {
+//PREV            //
+//PREV            //  Get location search returns from mapquest api and return as formatted html ready for display in layers sidebar
+//PREV            //
+//PREV            try { 
+//PREV                //
+//PREV                //  Firstly find the current country from the camera view position and an API call by lat/lng
+//PREV                //
+//PREV                var windowPosition = new Cesium.Cartesian2(viewer.container.clientWidth / 2, viewer.container.clientHeight / 2);
+//PREV                var pickRay = viewer.scene.camera.getPickRay(windowPosition);
+//PREV                var pickPosition = viewer.scene.globe.pick(pickRay, viewer.scene);
+//PREV                var pickPositionCartographic = viewer.scene.globe.ellipsoid.cartesianToCartographic(pickPosition);
+//PREV                var cameraLat = pickPositionCartographic.latitude * (180 / Math.PI);
+//PREV                var cameraLng = pickPositionCartographic.longitude * (180 / Math.PI);
+//PREV                var xhrObj = new XMLHttpRequest();
+                //PREVxhrObj.open('GET', "https://www.mapquestapi.com/geocoding/v1/address?key=s1clpEeZ4CcXR3QS2pnA77sbgnjXiK4P&inFormat=kvp&outFormat=json&thumbMaps=false&maxResults=20&location=" + cameraLat + ", " + cameraLng, false);
+//PREV                xhrObj.send('');
+//PREV                var ret = xhrObj.responseText;
+//PREV                var data = JSON.parse(ret);
+//PREV                var currentCountry = data.results["0"].locations["0"].adminArea1;
+//PREV
+//PREV                //
+//PREV                //  Call mapquest API with the user input as the search parameter
+//PREV                //
+//PREV                var xhrObj = new XMLHttpRequest();
+                //PREVxhrObj.open('GET', "https://www.mapquestapi.com/geocoding/v1/address?key=s1clpEeZ4CcXR3QS2pnA77sbgnjXiK4P&inFormat=kvp&outFormat=json&thumbMaps=false&maxResults=20&location=" + inSearchInput, false);
+//PREV                xhrObj.send('');
+//PREV
+//PREV                //
+//PREV                //  Get the result of the API call
+//PREV                //
+//PREV                var ret = xhrObj.responseText;
+//PREV                var data = JSON.parse(ret);
+//PREV                var results0locations = data.results["0"].locations;
+//PREV
+//PREV                //
+//PREV                //  Process each location returned;
+//PREV                //      If lat/lng was passed then accept the result
+//PREV                //      Else check the country matched to the camera view country and reject if not
+//PREV                //      For all accepted locations build the details string and create html of details and lat/lng for display in the sidebar
+//PREV                //
+//PREV                var rowCount = results0locations.length;
+//PREV                var generatedHTML = "";
+//PREV                for (var i=0 ; i<rowCount ; i++) {
+//PREV                    var display = "";
+//PREV                    var selected = false;
+//PREV                    var row = results0locations[i]
+//PREV                    var rowAdminArea1 = row.adminArea1;
+//PREV                    var rowAdminArea3 = row.adminArea3;
+//PREV                    var rowAdminArea4 = row.adminArea4;
+//PREV                    var rowAdminArea5 = row.adminArea5;
+//PREV                    var rowArea       = row.geocodeQuality;
+//PREV
+//PREV                    //
+//PREV                    //  If passed location was already a lat/lng then use these, because returned values are rarely the same!
+//PREV                    if (data.results["0"].providedLocation.latLng) {
+//PREV                        selected = true;
+//PREV                        var rowLat = data.results["0"].providedLocation.latLng.lat;
+//PREV                        var rowLng = data.results["0"].providedLocation.latLng.lng;
+//PREV                        display = rowLat + ", " + rowLng;
+//PREV                    } else {
+//PREV                        var rowLat = row.latLng.lat;
+//PREV                        var rowLng = row.latLng.lng;
+//PREV                    }
+//PREV
+//PREV                    if (rowAdminArea1 == currentCountry) { selected = true; }
+//PREV
+//PREV                    if (selected) {
+//PREV                            if (display.length == 0) {
+//PREV                            if (rowAdminArea5 != "") { display += rowAdminArea5; }
+//PREV                            if (rowAdminArea4 != "") { if (display.length > 0) { display += ", " } ; display += rowAdminArea4; }
+//PREV                            if (rowAdminArea3 != "") { if (display.length > 0) { display += ", " } ; display += rowAdminArea3; }
+//PREV                            if (rowAdminArea1 != "") { if (display.length > 0) { display += ", " } ; display += rowAdminArea1; }
+//PREV                        }
+//PREV
+//PREV                        generatedHTML += "<div class='search-sidebar-results-location' lat='" + rowLat + "' lng='" + rowLng + "' area='" + rowArea + "'>" + display + "</div>";
+//PREV                    }
+//PREV                }
+//PREV
+//PREV                if (generatedHTML.length == 0) {
+//PREV                    generatedHTML = "No results found";
+//PREV                }
+//PREV
+//PREV                return generatedHTML;
+//PREV            } catch(err) { 
+//PREV                logError(err, "getSearchReturns("+inSearchInput+")");
+//PREV            }
+//PREV        }
+//PREV
+//PREV
+//PREV
+//PREV        function getLayerDetails() {
+//PREV            let xmlData, xmlDoc, xml;
+//PREV            let configUsername, configPassword;
+//PREV            let allFolders;
+//PREV            let folderInnerHtml;
+//PREV            let queryUrl, projectUrl;
+//PREV
+//PREV            //  Get user and password from config
+//PREV            if (glbParseXmlValidFlag) {
+//PREV                queryUrl = params['server'];
+//PREV                if (queryUrl.slice(-1) != '/') {
+//PREV                    queryUrl += '/';
+//PREV                }
+//PREV                queryUrl += 'getconfigfile?name=' + params['config'];
+//PREV                $.ajax({
+//PREV                    type: 'GET',
+//PREV                    url:  queryUrl,
+//PREV                    xhrFields: {withCredentials:!0},
+//PREV                    async: false
+//PREV                })
+//PREV                .done(function (data) {
+//PREV                    var result = decodeURI(data.result);
+//PREVconsole.log("QQWWEE FIX FOR TESTING ONLY    " + '#'.repeat(120));                    
+//PREVconsole.log('#'.repeat(150));                    
+//PREVconsole.log('#'.repeat(150));                    
+//PREV                    if (result != 'true') {  ////  == 'true') {
+//PREV                        xmlDoc = $.parseXML(        //  WAS  decodeURI(data.Value)
+//PREV                            data.Value
+//PREV                            .replace(/sx:username/g, 'sx-username')
+//PREV                            .replace(/sx:password/g, 'sx-password')
+//PREV                        );
+//PREV                        xml = $(xmlDoc);
+//PREV                        let xmlElementUsername = xml.find("sx-username");  
+//PREV                        configUsername = xmlElementUsername[0].childNodes[0].nodeValue;
+//PREV                        let xmlElementPassword = xml.find("sx-password");  
+//PREV                        configPassword = xmlElementPassword[0].childNodes[0].nodeValue;
+//PREV                    } else {
+//PREV                        console.log("QQWWEE: running code for result == false");
+//PREV                        glbParseXmlValidFlag = false;
+//PREV                        console.error('AJAX call to '+queryUrl+' to read config file returned result: false');
+//PREV                        $('#show-errors-modal').addClass('show');
+//PREV                        $('#show-errors-modal').css('display', 'block');
+//PREV                        $('#show-errors-modal-details').html("<div>Config file misconfigured</div>");
+//PREV                        $message = 'Config file misconfigured';  //  include params['config']????       QQWWEE
+//PREV////  ===============================================================
+//PREV// remove $ from var posNameStart                                       ###################################################################                        
+//PREV// try this format  region = `{"Ref":"AWS::Region"}`                    ###################################################################
+//PREV// determine a method to genate date to format e.g. 2020-03-08          ###################################################################
+//PREV// if this can be got to work then move it to a separate function       ###################################################################                        
+//PREVlet $googleRoom    = "AAAATt7VEx8";
+//PREVlet $googleThread  = "caydence_thread_" + "2023-01-01";   ////    NEEDS TO BE SOMETHING LIKE THIS PHP CODE; date("Y-m-d");
+//PREVlet $googleKey     = "AIzaSyDdI0hCZtE6vySjMm-WEfRq3CPzqKqqsHI";
+//PREVlet $googleToken   = "EShqwRHwzUCuXTn6eNnRHuks5ff81_RZ01DL_smeHNM%3D";
+//PREV$url = "https://chat.googleapis.com/v1/spaces/"+$googleRoom+"/messages?fields=text&threadKey="+$googleThread+"&key="+$googleKey+"&token="+$googleToken;
+//PREVconsole.log("QQWWEE: values set up. url to be called is " + $url);
+//PREVconsole.log("QQWWEE: Ready to declare new XMLHttpRequest...");
+//PREVlet xhr = new XMLHttpRequest();
+//PREVconsole.log("QQWWEE: Defined. Now add values...");
+//PREVxhr.open("POST", $url);
+//PREVxhr.setRequestHeader("Accept", "application/json");
+//PREVxhr.setRequestHeader("Content-Type", "application/json");
+//PREVconsole.log("QQWWEE: Declare onreadystatechange...");
+//PREVxhr.onreadystatechange = function () {
+//PREV  if (xhr.readyState === 4) {
+//PREV    console.log(xhr.status);
+//PREV    console.log(xhr.responseText);
+//PREV  }
+//PREV};
+//PREVconsole.log("QQWWEE: set text parameter and send...");
+//PREVlet data = "{'text':'$inMessage'}";
+//PREVxhr.send(data);
+//PREVconsole.log("QQWWEE: Complete");
+//PREV////  ===============================================================                        
+//PREV                    }
+//PREV                })
+//PREV                .fail(function (jqXHR, textStatus, errorThrown) {
+//PREV                    glbParseXmlValidFlag = false;
+//PREV                    console.error('AJAX call to read config file using api call '+queryUrl+' failed');
+//PREV                    console.error(jqXHR);
+//PREV                    $('#show-errors-modal').addClass('show');
+//PREV                    $('#show-errors-modal').css('display', 'block');
+//PREV                    $('#show-errors-modal-details').html("<div>Unable to read config file</div>");
+//PREV                });
+//PREV            }
+//PREV
+//PREV            //  Connect to SG
+//PREV            if (glbParseXmlValidFlag) {
+//PREV                let loginParameters = JSON.stringify({request:"login", username: configUsername, password: configPassword});
+//PREV                let connectUrl = params['server'] + "/ConnectSG";
+//PREV                $.ajax({
+//PREV                    type: 'POST',
+//PREV                    url:  connectUrl,
+//PREV                    data: loginParameters,
+//PREV                    xhrFields: {withCredentials:!0},
+//PREV                    async: false
+//PREV                })
+//PREV                .done(function (data) {
+//PREV                    if (data.result != 'success') {
+//PREV                        glbParseXmlValidFlag = false;
+//PREV                        glbParseXmlErrorMessage = formatglbParseXmlErrorMessage('AJAX call to connect to SG', data);
+//PREV                    }
+//PREV                })
+//PREV                .fail(function (jqXHR, textStatus, errorThrown) {
+//PREV                    console.error('getLayerDetails: AJAX call to connect ended in fail');
+//PREV                    console.error("getLayerDetails:     textStatus               '" + textStatus + "'");
+//PREV                    console.error("getLayerDetails:     errorThrown              '" + errorThrown + "'");
+//PREV                    console.error("getLayerDetails:     result                   '" + jqXHR.responseJSON.result + "'");
+//PREV                    console.error("getLayerDetails:     resultMessageCode        '" + jqXHR.responseJSON.resultMessageCode + "'");
+//PREV                    console.error("getLayerDetails:     resultMessageDescription '" + jqXHR.responseJSON.resultMessageDescription + "'");
+//PREV                    glbParseXmlValidFlag = false;
+//PREV                    glbParseXmlErrorMessage = formatglbParseXmlErrorMessage('AJAX call to connect to SG', jqXHR);
+//PREV                });
+//PREV            }
+//PREV
+//PREV            //  Get project details
+//PREV            if (glbParseXmlValidFlag) {
+//PREV                projectUrl = params['server'];
+//PREV                if (projectUrl.slice(-1) != '/') {
+//PREV                    projectUrl += '/';
+//PREV                }
+//PREV                projectUrl += "projects?id=" + params['catalogid'];
+//PREV
+//PREV                $.ajax({
+//PREV                    type:      'GET',
+//PREV                    url:       projectUrl,
+//PREV                    xhrFields: {withCredentials:!0},
+//PREV                    async:     false
+//PREV                })
+//PREV                .done(function (data) {
+//PREV                    xmlData = data;
+//PREV                    if (glbDiagFlag) {
+//PREV                        console.log(data);  //  Log the data as read. Only when diagnostic flag set as this takes a lot of log space.
+//PREV                    }
+//PREV                })
+//PREV                .fail(function (jqXHR, textStatus, errorThrown) {
+//PREV                    console.error('getLayerDetails: AJAX call to get project data failed');
+//PREV                    console.error("getLayerDetails:     textStatus                '" + textStatus + "'");
+//PREV                    console.error("getLayerDetails:     errorThrown               '" + errorThrown + "'");
+//PREV                    console.error("getLayerDetails:     result                    '" + jqXHR.responseJSON.result + "'");
+//PREV                    console.error("getLayerDetails:     resultMessageCode         '" + jqXHR.responseJSON.resultMessageCode + "'");
+//PREV                    console.error("getLayerDetails:     resultMessageDescription  '" + jqXHR.responseJSON.resultMessageDescription + "'");
+//PREV                    glbParseXmlValidFlag = false;
+//PREV                    glbParseXmlErrorMessage = formatglbParseXmlErrorMessage('AJAX call to get project details', jqXHR.responseJSON);
+//PREV                });
+//PREV            }
+//PREV
+//PREV            //  Pre process XML (as a string) to add full path to folder name tags and also readable tags to mark the end of a folder
+//PREV            if (glbParseXmlValidFlag) {
+//PREV                let replaceFrom, replaceTo;
+//PREV                let indexNameEndTag;
+//PREV                let xmlDataNext50, folderName, folderPath;
+//PREV                let xmlDocFolder, xmlFolder;
+//PREV                var foldersPathList = [];
+//PREV                var xmlUpdates = [];
+//PREV                var level=0;
+//PREV                var xmlDataUpdated = xmlData;
+//PREV
+//PREV                for (var i=0 ; i<xmlData.length ; i++) {
+//PREV                    if (xmlData.substr(i, 8) == '<Folder>')  {
+//PREV                        xmlDataNext50 = xmlData.substr(i+8,50);
+//PREV                        if (xmlDataNext50.substr(0,6) == '<name>') {
+//PREV                            indexNameEndTag = xmlDataNext50.indexOf("</name>");
+//PREV                            if (indexNameEndTag > -1) {
+//PREV                                folderName = xmlDataNext50.substring(6, indexNameEndTag);
+//PREV                                foldersPathList[level] = folderName;
+//PREV                                level += 1;
+//PREV                                folderPath = "";
+//PREV                                for (var j=0 ; j<level ; j++) {
+//PREV                                    if (j > 0) {
+//PREV                                        folderPath += glbDelimiterFolderPath;
+//PREV                                    }
+//PREV                                    folderPath += foldersPathList[j];
+//PREV                                }
+//PREV                                if (glbDiagFlag) {
+//PREV                                    console.log("getLayerDetails: Pre process XML    "+'    '.repeat(level)+"'"+folderName+"' {");
+//PREV                                }
+//PREV                                replaceFrom = "<Folder><name>"+folderName+"</name>";
+//PREV                                replaceTo   = "<Folder name='"+folderName+"' path='"+folderPath+"'><name path='"+folderPath+"'>"+folderName+"</name>";
+//PREV                                if (replaceFrom != replaceTo) {
+//PREV                                    var diagLenBefore1 = xmlDataUpdated.length;
+//PREV                                    xmlDataUpdated = xmlDataUpdated.replace(replaceFrom, replaceTo);
+//PREV                                    var diagLenafter1 = xmlDataUpdated.length;
+//PREV                                    if (diagLenBefore1 == diagLenafter1) {
+//PREV                                        glbParseXmlValidFlag = false; console.log("******** update failed for '"+replaceFrom+"'");
+//PREV                                        glbParseXmlErrorMessage = "XML Pre processing update to <folder> failed trying to match "+xmlDataNext50;
+//PREV                                    }
+//PREV                                }
+//PREV                            } else {
+//PREV                                glbParseXmlValidFlag = false;
+//PREV                                glbParseXmlErrorMessage = "XML Pre processing, </name> not found when processing folder - "+xmlDataNext50;
+//PREV                            }
+//PREV                        } else {
+//PREV                            glbParseXmlValidFlag = false;
+//PREV                            glbParseXmlErrorMessage = "XML Pre processing, <name> not found when processing folder - "+xmlDataNext50;
+//PREV                        }
+//PREV                    } else if (xmlData.substr(i, 9) == '</Folder>') {
+//PREV                        if (glbDiagFlag) {
+//PREV                            console.log("getLayerDetails: Pre process XML    "+'    '.repeat(level)+"}");
+//PREV                        }
+//PREV                        level -= 1;
+//PREV                        replaceFrom = "</Folder>";
+//PREV                        replaceTo   = "<folder-last></folder-last></FolderQQ>";  //  QQ is needed to mark this </Folder> as processed
+//PREV                        xmlDataUpdated = xmlDataUpdated.replace(replaceFrom, replaceTo);
+//PREV                    } else if (   xmlData.substr(i, 14) == '<sx:PointCloud' 
+//PREV                               || xmlData.substr(i, 16) == '<sx:FeatureLayer'
+//PREV                               || (xmlData.substr(i, 15) == '<sx:RasterLayer' && xmlData.substr(i+16,2)=='id')) {
+//PREV                        var posNodenameEnd = Math.min(xmlData.indexOf(' ', i), xmlData.indexOf('>', i));
+//PREV                        var posNameStart = xmlData.indexOf('<name>', i);
+//PREV                        var posNameEnd   = xmlData.indexOf('</name>', i);
+//PREV                        if (glbDiagFlag) {
+                            //PREVconsole.log("getLayerDetails: Pre process XML    "+'    '.repeat(level)+"    "+(xmlData.substr(i+1, posNodenameEnd-i-1)+'     ').substr(0,18)+xmlData.substr(posNameStart+6, posNameEnd-posNameStart-6));
+//PREV                        }
+//PREV                    }
+//PREV                }
+//PREV                xmlDataUpdated = xmlDataUpdated.replace(/FolderQQ/g, 'Folder');  //  Remove all QQ which were added earlier to avoid updating the wrong /Folder
+//PREV                xmlData = xmlDataUpdated;
+//PREV            }
+//PREV
+//PREV            //  Parse project details XML
+//PREV            if (glbParseXmlValidFlag) {
+//PREV                xmlDoc = $.parseXML(xmlData);
+//PREV                xml = $(xmlDoc);
+//PREV
+//PREV                //  First find all styles to allow later matching of layers which are locked
+//PREV                var allStyles = xml.find("Style");  
+//PREV                for (let i=0 ; i<allStyles.length ; i++) {  
+//PREV                    let thisStyleName = allStyles[i].attributes.id.nodeValue;   
+//PREV                    let stylesXmlFolder = $($.parseXML("<xml>" + allStyles[i].innerHTML + "</xml>"));   
+//PREV                    let stylesAllElements = stylesXmlFolder.find('*');  
+//PREV                    for (let j=0 ; j < stylesAllElements.length ; j++) {
+//PREV                        if (stylesAllElements[j].nodeName == 'listItemType' && stylesAllElements[j].innerHTML == 'checkHideChildren') { 
+//PREV                            glbStylesToHideList[thisStyleName] = stylesAllElements[j].innerHTML;
+//PREV                        }   
+//PREV                    }   
+//PREV                }   
+//PREV
+//PREV                //  Isolate the xml for the first folder to be passed to the recursive routine to parse each folder
+//PREV                allFolders = xml.find("Document");
+//PREV
+//PREV                if (allFolders.length == 0) {
+//PREV                    glbParseXmlValidFlag = false;
+//PREV                    glbParseXmlErrorMessage = 'No Folder elements found in XML';
+//PREV                }
+                //PREV
+//PREV                folderInnerHtml = "<xml>" + allFolders[0].innerHTML + "</xml>";
+//PREV                var xmlDocFolder = $.parseXML(folderInnerHtml);
+//PREV                var xmlFolder = $(xmlDocFolder);
+//PREV                glbParseXmlValidFlag = processFolderXml(xmlFolder);
+//PREV
+//PREV                //  Pull in the index and visibility for the layers list from the TerraExplorer project items object
+//PREV                console.log("XXXX Logic for extracting projectIndex from TerraExplorer.project.items uses layer name. WILL NOT WORK FOR DUPLICATE LAYER NAMES....");
+//PREV                if (glbParseXmlValidFlag) {
+//PREV                    for (var i=0 ; i<TerraExplorer.project.items.length ; i++) {
+//PREV                        var thisName = TerraExplorer.project.items[i]['_object']['displayName'].replace('&', '&amp;');
+//PREV                        var entries = Object.entries(glbProcessedLayersList);
+//PREV                        for (const [key, values] of entries) {
+//PREV                            if (values.name == thisName) {
+//PREV                                glbProcessedLayersList[key].projectIndex = i;
+//PREV                                glbProcessedLayersList[key].show = TerraExplorer.project.items[i].show;
+//PREV                            }
+//PREV                        }
+//PREV                    }
+//PREV                }
+//PREV
+//PREV                //  Pull in the cloud index and point size for the layers from the TerraExplorer point cloud object
+//PREV                console.log("XXXX Logic for pointCloudIndex and pointSize from TerraExplorer.layers.pointCloud.items uses layer name. WILL NOT WORK FOR DUPLICATE LAYER NAMES....");
+//PREV                if (glbParseXmlValidFlag) {
+//PREV                    for (var i=0 ; i<TerraExplorer.layers.pointCloud.items.length ; i++) {
+//PREV                        var thisName = TerraExplorer.layers.pointCloud.items[i].options.displayName;
+//PREV                        var entries = Object.entries(glbProcessedLayersList);
+//PREV                        for (const [key, values] of entries) {
+//PREV                            if (values.name == thisName) {
+//PREV                                glbProcessedLayersList[key].pointCloudIndex = i;
+//PREV                                glbProcessedLayersList[key].pointSize = 'Y';
+//PREV                            }
+//PREV                        }
+//PREV                    }
+//PREV                }
+//PREV
+//PREV                //  Update element list with values from both folders list and layers list
+//PREV                if (glbParseXmlValidFlag) {
+//PREV                    var entries = Object.entries(glbProcessedElementsList);
+//PREV                    for (const [key,processedElement] of entries) {
+//PREV                        var thisPath = processedElement.path;
+//PREV                        if (processedElement.elementType == 'folder') {
+//PREV                            processedElement.status           = glbProcessedFoldersList[thisPath].status;
+//PREV                            processedElement.level            = glbProcessedFoldersList[thisPath].level;
+//PREV                        } else if (processedElement.elementType == 'layer') {
+//PREV                            //processedElement.type             = glbProcessedLayersList[thisPath].type;
+//PREV                            processedElement.id               = glbProcessedLayersList[thisPath].id;
+//PREV                            processedElement.pointSize        = glbProcessedLayersList[thisPath].pointSize;
+//PREV                            processedElement.projectIndex     = glbProcessedLayersList[thisPath].projectIndex;
+//PREV                            processedElement.pointCloudIndex  = glbProcessedLayersList[thisPath].pointCloudIndex;
+//PREV                            processedElement.show             = glbProcessedLayersList[thisPath].show;
+//PREV                        }
+//PREV                    }
+//PREV                }
+//PREV
+//PREV                if (glbDiagFlag) {
+//PREV                    console.log(" ");
+//PREV                    console.log("getLayerDetails: Final state of glbStylesToHideList...............", glbStylesToHideList);
+//PREV                    console.log("getLayerDetails: glbProcessedFoldersList array.... ", glbProcessedFoldersList);
+//PREV                    console.log("getLayerDetails: glbProcessedLayersList array..... ", glbProcessedLayersList);
+//PREV                    console.log("getLayerDetails: glbProcessedElementsList.array... ", glbProcessedElementsList);
+//PREV                }
+//PREV
+//PREV                if (glbDiagFlag) {
+//PREV                    var diagLength = Object.keys(glbProcessedFoldersList).length;
+//PREV                    console.log(" "); console.log(" ");
+//PREV                    console.log("  +" + diagFmt('-', 134, '*') + "+");
+//PREV                    console.log("  |" + diagFmt("  glbProcessedFoldersList.  "+diagLength+" entries", 134) + "|");
+//PREV                    var fillLine = "  + " + 
+//PREV                                   diagFmt('-',70,'*') + " + " + 
+//PREV                                   diagFmt('-',35,'*') + " + " + 
+//PREV                                   diagFmt('-',10,'*') + " + " + 
+//PREV                                   diagFmt('-',8,'*')  + " +";
+//PREV                    console.log(fillLine);
+//PREV                    console.log("  | " +
+//PREV                                diagFmt('path',70,'c')   + " | " +
+//PREV                                diagFmt('name',35,'c')   + " | " +
+//PREV                                diagFmt('status',10,'c') + " | " +
+//PREV                                diagFmt('level',8,'c')   + " |"
+//PREV                    );
+//PREV                    console.log(fillLine);
+//PREV                    var entries = Object.entries(glbProcessedFoldersList);
+//PREV                    for (const [key, values] of entries) {
+//PREV                        console.log("  | " +
+//PREV                                    diagFmt(key,70)           + " | " +
+//PREV                                    diagFmt(values.name,35)   + " | " +
+//PREV                                    diagFmt(values.status,10) + " | " +
+//PREV                                    diagFmt(values.level,8)   + " |"
+//PREV                        );
+//PREV                        console.log(fillLine);
+//PREV                    }
+//PREV                }
+//PREV
+//PREV                if (glbDiagFlag) {
+//PREV                    var diagLength = Object.keys(glbProcessedLayersList).length;
+//PREV                    console.log(" "); console.log(" ");
+//PREV                    console.log("  +" + diagFmt('-', 240, '*') + "+");
+//PREV                    console.log("  |" + diagFmt("  glbProcessedLayersList.  "+diagLength+" entries", 240) + "|");
+//PREV                    var fillLine = "  + " + 
+//PREV                                   diagFmt('-',100,'*') + " + " + 
+//PREV                                   diagFmt('-',45,'*')  + " + " + 
+//PREV                                   diagFmt('-',15,'*')  + " + " + 
+//PREV                                   diagFmt('-',15,'*')  + " + " + 
+//PREV                                   diagFmt('-',10,'*')  + " + " + 
+//PREV                                   diagFmt('-',20,'*')  + " + " + 
+//PREV                                   diagFmt('-',15,'*')  + " +";
+//PREV                    console.log(fillLine);
+//PREV                    console.log("  | " +
+//PREV                                diagFmt('path',100,'c')           + " | " +
+//PREV                                diagFmt('name',45,'c')            + " | " +
+//PREV                                diagFmt('id',15,'c')              + " | " +
+//PREV                                diagFmt('projectIndex',15,'c')    + " | " +
+//PREV                                diagFmt('show',10,'c')            + " | " +
+//PREV                                diagFmt('pointCloudIndex',20,'c') + " | " +
+//PREV                                diagFmt('pointSize',15,'c')       + " |"
+//PREV                    );
+//PREV                    console.log(fillLine);
+//PREV                    var entries = Object.entries(glbProcessedLayersList);
+//PREV                    for (const [key, values] of entries) {
+//PREV                        console.log("  | " +
+//PREV                                    diagFmt(key,100)                   + " | " +
+//PREV                                    diagFmt(values.name,45)            + " | " +
+//PREV                                    diagFmt(values.id,15)              + " | " +
+//PREV                                    diagFmt(values.projectIndex,15)    + " | " +
+//PREV                                    diagFmt(values.show,10)            + " | " +
+//PREV                                    diagFmt(values.pointCloudIndex,20) + " | " +
+//PREV                                    diagFmt(values.pointSize,15)       + " |"
+//PREV                        );
+//PREV                        console.log(fillLine);
+//PREV                    }
+//PREV                }
+//PREV
+//PREV                if (glbDiagFlag) {
+//PREV                    //  Display contents of glbProcessedElementList
+//PREV                    console.log(" "); console.log(" ");
+//PREV                    console.log("  +" + diagFmt('-', 230, '*') + "+");
+//PREV                    console.log("  |" + diagFmt("  glbProcessedElementList.  "+glbProcessedElementsList.length+" entries", 230) + "|");
+//PREV                    var fillLine = "  + " + 
+//PREV                                   diagFmt('-',15,'*') + " + " + 
+//PREV                                   diagFmt('-',45,'*') + " + " + 
+//PREV                                   diagFmt('-',10,'*') + " + " + 
+//PREV                                   diagFmt('-',15,'*') + " + " + 
+//PREV                                   diagFmt('-',10,'*') + " + " + 
+//PREV                                   diagFmt('-',15,'*') + " + " + 
+//PREV                                   diagFmt('-',10,'*') + " +";
+//PREV                    console.log(fillLine);
+//PREV                    console.log("  | "                               + 
+//PREV                                diagFmt('elementType',15,'c')        + " | " +
+//PREV                                diagFmt('label',45,'c')              + " | " +
+//PREV                                diagFmt('id',10,'c')                 + " | " +
+//PREV                                diagFmt('pointCloudIndex',15,'c')    + " | " +
+//PREV                                diagFmt('pointSize',10,'c')          + " | " +
+//PREV                                diagFmt('projectIndex',15,'c')       + " | " +
+//PREV                                diagFmt('show',10,'c')               + " |"
+//PREV                    );
+//PREV                    console.log(fillLine);
+//PREV                    for (var i=1 ; i<glbProcessedElementsList.length ; i++) {
+//PREV                        console.log("  | " +
+//PREV                                    diagFmt(glbProcessedElementsList[i].elementType,15)      + " | " +
+//PREV                                    diagFmt(glbProcessedElementsList[i].label,45)            + " | " +
+//PREV                                    diagFmt(glbProcessedElementsList[i].id,10)               + " | " +
+//PREV                                    diagFmt(glbProcessedElementsList[i].pointCloudIndex,15)  + " | " +
+//PREV                                    diagFmt(glbProcessedElementsList[i].pointSize,10)        + " | " +
+//PREV                                    diagFmt(glbProcessedElementsList[i].projectIndex,15)     + " | " +
+//PREV                                    diagFmt(glbProcessedElementsList[i].show,10)             + " |"
+//PREV                        );
+//PREV                        console.log(fillLine);
+//PREV                    }
+//PREV                }
+//PREV            }
+//PREV
+//PREV            if (!glbParseXmlValidFlag) {
+//PREV                console.error("XML parsing logic ended with " + glbParseXmlValidFlag + ", '" + glbParseXmlErrorMessage + "'");
+//PREV            }
+//PREV        }
+//PREV
+//PREV
+//PREV
+//PREV        function processFolderXml(inXmlFolder) {
+//PREV            let allElements;
+//PREV            let isLayerFlag, isFolderStartFlag, isFolderEndFlag, isStyleUrl;
+//PREV            let currentLevel;
+//PREV            let thisElementName, thisElementHasId;
+//PREV            let thisFolderName, thisFolderPath, thisFolderStatus;
+//PREV            let thisLayerName, thisLayerPath, thisLayerId;
+//PREV            let tryElementPlus0, tryElementPlus2;
+//PREV            let folderNamesByLevel = [], folderDisplayableItemsByLevel = [];
+//PREV
+//PREV            currentLevel = 0;
+//PREV            allElements = inXmlFolder.find('*');
+//PREV            for (let i=0 ; glbParseXmlValidFlag == true && i < allElements.length ; i++) {
+//PREV                isLayerFlag       = false;
+//PREV                isFolderStartFlag = false;
+//PREV                isFolderEndFlag   = false;
+//PREV                isStyleUrl        = false;
+//PREV                thisElementName = allElements[i].nodeName;
+//PREV                thisElementHasId = (allElements[i].attributes.id != null);
+//PREV                if (   thisElementName == 'sx:PointCloud'
+//PREV                    || thisElementName == 'sx:FeatureLayer'
+//PREV                    || (thisElementName == 'sx:RasterLayer' && thisElementHasId)
+//PREV                   )  {
+//PREV                    isLayerFlag = true;
+//PREV                } else if (thisElementName == 'Folder') {
+//PREV                    isFolderStartFlag = true;
+//PREV                } else if (thisElementName == 'folder-last') {
+//PREV                    isFolderEndFlag = true;
+//PREV                } else if (thisElementName == 'styleUrl') {
+//PREV                    isStyleUrl = true;
+//PREV                }
+//PREV
+//PREV                if        (isLayerFlag)  {
+//PREV                    /*
+//PREV                     *  Process a layer
+//PREV                     */
+//PREV                    if (glbParseXmlValidFlag) {
+//PREV                        thisLayerName = "";
+//PREV                        tryElementPlus0 = allElements[i].childNodes[0].nodeName;
+//PREV                        tryElementPlus2 = allElements[i].childNodes[2].nodeName;
+//PREV                        if        (tryElementPlus0 == 'name') {
+//PREV                            thisLayerName = allElements[i].childNodes[0].innerHTML;
+//PREV                        } else if (tryElementPlus2 == 'name') {
+//PREV                            thisLayerName = allElements[i].childNodes[2].innerHTML;
+//PREV                        } else {
+//PREV                            glbParseXmlValidFlag = false;
+//PREV                            glbParseXmlErrorMessage = 'Name not found for layer';
+//PREV                        }
+//PREV                    }
+//PREV                    if (glbParseXmlValidFlag) {
+//PREV                        folderDisplayableItemsByLevel[currentLevel] = true;
+//PREV                        thisLayerPath = thisFolderPath + glbDelimiterLayerPath + thisLayerName;
+//PREV                        thisLayerId   = allElements[i].attributes.id.nodeValue;
+//PREV                        glbProcessedLayersList[thisLayerPath] = {'name': thisLayerName, 'id': thisLayerId};
+//PREV                        glbProcessedElementsListCount2 = glbProcessedElementsListCount2 + 1;
+//PREV                        glbProcessedElementsList[glbProcessedElementsListCount2] = {'elementType': 'layer', 'label': thisLayerName, 'path': thisLayerPath};
+//PREV                    }
+//PREV                } else if (isFolderStartFlag) {
+//PREV                    /*
+//PREV                     *  Process a folder start tag. Display name and full path are attributes of the tag added to the XML in the pre-processing step
+//PREV                     */
+//PREV                    if (glbParseXmlValidFlag) {
+//PREV                        if (allElements[i].childNodes[0].nodeName != 'name') {
+//PREV                            glbParseXmlValidFlag = false;
+//PREV                            glbParseXmlErrorMessage = 'Name not found for folder';
+//PREV                        }
+//PREV                    }
+//PREV                    if (glbParseXmlValidFlag) {
+//PREV                        folderDisplayableItemsByLevel[currentLevel] = true;
+//PREV                        currentLevel++;
+//PREV                        folderDisplayableItemsByLevel[currentLevel] = false;
+//PREV                        thisFolderName = allElements[i].getAttribute('name');
+//PREV                        thisFolderPath = allElements[i].getAttribute('path');
+//PREV                        if (!thisFolderName || !thisFolderPath) {
+//PREV                            glbParseXmlValidFlag = false;
+//PREV                            glbParseXmlErrorMessage = 'Folder did not contain attributes for name and path';
+//PREV                        }
+//PREV                    }
+//PREV                    if (glbParseXmlValidFlag) {
+//PREV                        folderNamesByLevel[currentLevel] = thisFolderName;
+//PREV                        thisFolderStatus = (allElements[i+2].nodeName == 'open') ? 'open' : 'closed';
+//PREV                        glbProcessedFoldersList[thisFolderPath] = {'name': thisFolderName, 'status': thisFolderStatus, 'level': currentLevel};
+//PREV                        glbProcessedElementsListCount2 = glbProcessedElementsListCount2 + 1;
+//PREV                        glbProcessedElementsList[glbProcessedElementsListCount2] = {'elementType': 'folder', 'label': thisFolderName, 'path': thisFolderPath};
+//PREV
+//PREV                    }
+//PREV                } else if (isFolderEndFlag) {
+//PREV                    /*
+//PREV                     *  Process folder end tag
+//PREV                     */
+//PREV                    thisFolderName = folderNamesByLevel[currentLevel];
+//PREV                    if (folderDisplayableItemsByLevel[currentLevel] === false) {
+                        //PREVconsole.log("processFolderXml: No displayable items found for folder '"+thisFolderName+"' in '"+thisFolderPath.replace(':'+thisFolderName, '')+"'. This folder will not be added to the list");
+//PREV                        delete glbProcessedFoldersList[thisFolderPath];
+//PREV                        delete glbProcessedElementsList[glbProcessedElementsListCount2];
+//PREV                        glbProcessedElementsListCount2 = glbProcessedElementsListCount2 - 1;
+//PREV                    } else {
+//PREV                        glbProcessedElementsListCount2 = glbProcessedElementsListCount2 + 1;
+//PREV                        glbProcessedElementsList[glbProcessedElementsListCount2] = {'elementType': 'folder-end', 'label': thisFolderName};
+//PREV                    }
+//PREV                    currentLevel--;
+//PREV                } else if (isStyleUrl) {
+//PREV                    /*
+//PREV                     *  Process style url. If the value matches to the styles to hide list then lock the folder
+//PREV                     */
+//PREV                    var layerNameToCheck = allElements[i].innerHTML.replace('#','');
+//PREV                    if (glbStylesToHideList[layerNameToCheck] == 'checkHideChildren') {
+                        //PREVconsole.log("processFolderXml: layer '"+layerNameToCheck+"' has an associated style of checkHideChildren. Parent folder '"+thisFolderPath+"' is being set to status locked");
+//PREV                        glbProcessedFoldersList[thisFolderPath].status = 'locked';
+//PREV                    }
+//PREV                }
+//PREV            }
+//PREV
+//PREV            return glbParseXmlValidFlag;
+//PREV        }
+//PREV
+//PREV
+//PREV
+//PREV        function formatglbParseXmlErrorMessage(inFunction, inObj) {
+//PREV            let ret = '';
+//PREV            ret = 'Error in ' + inFunction + ': ';
+//PREV            ret = ret + " result = ";
+//PREV            if (inObj.result)                   { ret = ret + "'" + inObj.result + "'"; }                   else { ret = ret + "null"; }
+//PREV            ret = ret + ", resultMessageCode = ";
+//PREV            if (inObj.resultMessageCode)        { ret = ret + "'" + inObj.resultMessageCode + "'"; }        else { ret = ret + "null"; }
+//PREV            ret = ret + ", resultMessageDescription = ";
+//PREV            if (inObj.resultMessageDescription) { ret = ret + "'" + inObj.resultMessageDescription + "'"; } else { ret = ret + "null"; }
+//PREV            console.error(ret);
+//PREV        }
+//PREV
+//PREV
+//PREV
+//PREV        function sanitiseName(inName) {
+//PREV            return inName.replace(/ /g,"-").replace(/---/g,"-").replace(/--/g,"-").replace(/\./g,"").toLowerCase();
+//PREV        }
+//PREV
+//PREV
+//PREV
+//PREV        /*
+//PREV         *  Reset all folders in the layers menu to reflect the visibility of the layers beneath them.
+//PREV         *    Search all folders, for each check visibility of all ancestor layers and if required toggle the visibility classes.
+//PREV         */
+//PREV        function adjustLayersTreeFolderVisibility() {
+//PREV            var searchFolderClass, searchLayerClass;
+//PREV            var thisFolderId, thisFolderCategory;
+//PREV            var hasVisibleLayer;
+            //PREV
+//PREV            searchFolderClass = ".tree-category-name";
+//PREV            $(searchFolderClass).each(function () {
+//PREV                thisFolderCategory = $(this).attr('category');
+//PREV                thisFolderId = $(this).attr('id');
+//PREV                searchLayerClass = ".ancestor-of-"+thisFolderCategory;
+//PREV                hasVisibleLayer = false;
+//PREV                $(searchLayerClass).each(function () {
+//PREV                    if ($(this).hasClass('tree-layer-item-visible')) {
+//PREV                        hasVisibleLayer = true;
+//PREV                        return false;
+//PREV                    }
+//PREV                });
+//PREV                if ($('#tree-category-name-'+thisFolderCategory).hasClass('tree-category-with-visible-children') !== hasVisibleLayer) {
+//PREV                    if (hasVisibleLayer) {  
+//PREV                        $('#tree-category-name-'+thisFolderCategory).removeClass('tree-category-no-visible-children');
+//PREV                        $('#tree-category-name-'+thisFolderCategory).addClass('tree-category-with-visible-children');
+//PREV                        $('#tree-category-minus-'+thisFolderCategory).removeClass('tree-category-no-visible-children');
+//PREV                        $('#tree-category-minus-'+thisFolderCategory).addClass('tree-category-with-visible-children');
+//PREV                        $('#tree-category-plus-'+thisFolderCategory).removeClass('tree-category-no-visible-children');
+//PREV                        $('#tree-category-plus-'+thisFolderCategory).addClass('tree-category-with-visible-children');
+//PREV                    } else {
+//PREV                        $('#tree-category-name-'+thisFolderCategory).removeClass('tree-category-with-visible-children');
+//PREV                        $('#tree-category-name-'+thisFolderCategory).addClass('tree-category-no-visible-children');
+//PREV                        $('#tree-category-minus-'+thisFolderCategory).removeClass('tree-category-with-visible-children');
+//PREV                        $('#tree-category-minus-'+thisFolderCategory).addClass('tree-category-no-visible-children');
+//PREV                        $('#tree-category-plus-'+thisFolderCategory).removeClass('tree-category-with-visible-children');
+//PREV                        $('#tree-category-plus-'+thisFolderCategory).addClass('tree-category-no-visible-children');
+//PREV                    }
+//PREV                }
+//PREV            });
+//PREV        }
+//PREV
+//PREV
+//PREV
+//PREV        function showObject(inObject, inLevel, inKey) {
+//PREV            //  Diagnostic use only, not currently called. To display the contents of an object. Leave here for reuse if required
+//PREV            if (inLevel == null) { inLevel = 0; }
+//PREV            if (inKey == null) { inKey = ""; }
+//PREV            const fill = "      " + "  |   ".repeat(inLevel);
+//PREV            if      (inObject == null)              { console.log(fill + inKey + "  [?]  null"); }
+//PREV            else if (typeof inObject == "number")   { console.log(fill + inKey + "  [number]  = "  + inObject); }
+//PREV            else if (typeof inObject == "string")   { console.log(fill + inKey + "  [string]  = "  + inObject); }
+//PREV            else if (typeof inObject == "boolean")  { console.log(fill + inKey + "  [boolean]  = " + inObject); }
+//PREV            else if (typeof inObject == "function") { console.log(fill + inKey + "()  [function]"); }
+//PREV            else if (typeof inObject == "object")  { 
+//PREV                if (inLevel < 3) {
+//PREV                    if (inKey == "") {
+//PREV                        console.log(fill + "  object  {");
+//PREV                    } else {
+//PREV                        console.log(fill + inKey + "  {");
+//PREV                    }
+//PREV                    const entries = Object.entries(inObject);
+//PREV                    for (const [key,value] of entries) {  
+//PREV                        showObject(value, inLevel+1, key);
+//PREV                    }
+//PREV                    if (inKey == "") {
+//PREV                        console.log(fill + "  }");
+//PREV                    } else {
+//PREV                        console.log(fill + "}");
+//PREV                    }
+//PREV                } else {
+//PREV                    if (inKey == "") {
+//PREV                        console.log(fill + "  object  { ... }");
+//PREV                    } else {
+//PREV                        console.log(fill + inKey + "  { ... }");
+//PREV                    }
+//PREV                }
+//PREV            }
+//PREV            else { console.log(fill + "**** other type, " + typeof inObject); }
+//PREV        }
+//PREV
+//PREV
+        function displayErrorToUser(inMessage) {
+            //
+            //  Open a modal window to let the user know the process has failed
+            //  Some errors will result in corresponding text for the user, any other errors will use generic text. Recognised errors;
+            //      'Error: You do not have permission to use this terrain'
+            //      'Error: You do not have permission to read this KML'
+            //  NB: For some reason .modal() does not work here, so need to use the addClass and css changes below to open the window
+            //
+            try{
+                let bodyText;
+                if (inMessage.search('You do not have permission') > -1 ) {
+                    bodyText = "An error occured which will prevent the viewer from opening - " + inMessage.replace('Error: ', '');
+                } else {
+                    bodyText = "An error occured which may prevent the viewer from opening or may only show partial data";
+                }
+                console.log("displayErrorToUser: Called with '"+inMessage+"', will display '"+bodyText+"'");
+
+                $('#show-errors-modal').addClass('show');
+                $('#show-errors-modal').css('display', 'block');
+                $('#show-errors-modal-details').html("<div>"+bodyText+"</div>");
+            } catch(err) {
+                logError(err, "displayErrorToUser("+inMessage+")");
+            }
+        }
+//PREV
+//PREV
+//PREV        function logError(inErr, inWhere) {
+//PREV            //DIAGNOSTIC//  alert("Error caught in " + inWhere + ": " + inErr.name + " - " + inErr.message);
+//PREV            console.error("Error caught;");
+//PREV            console.error("    Function      : " + inWhere);
+//PREV            console.error("    Error name    : " + inErr.name);
+//PREV            console.error("    Error message : " + inErr.message);
+//PREV        }
+//PREV
+//PREV
+//PREV        function diagFmt(inString, inLength, inRepeat=' ') {
+//PREV            var out = '';
+//PREV            var padLengthTotal, padLengthLeft, padLengthRight;
+//PREV
+//PREV            if      (!inString)                     { inString = 'null'; }
+//PREV            else if (typeof inString == 'number')   { inString = inString.toString(); }
+//PREV            else if (typeof inString == 'boolean')  { inString = (inString === true) ? 'true' : 'false'; }
+//PREV
+//PREV            if        (inRepeat == '*') {
+//PREV                out = (inString.repeat(inLength)).substr(0, inLength);
+//PREV            } else {
+//PREV                padLengthTotal = Math.max(inLength - inString.length, 0);
+//PREV                if (inRepeat == 'c') {
+//PREV                    padLengthLeft = parseInt(padLengthTotal / 2);
+//PREV                    padLengthRight = padLengthTotal - padLengthLeft;
+//PREV                    out = ' '.repeat(padLengthLeft) + inString + ' '.repeat(padLengthRight);
+//PREV                } else {
+//PREV                    out = inString + ' '.repeat(padLengthTotal);
+//PREV                }
+//PREV            }
+//PREV
+//PREV            return out;
+//PREV        }
+    </script>
+</body>
+
+</html>
+

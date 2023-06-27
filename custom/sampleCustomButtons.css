@@ -1,0 +1,10 @@
+:root {
+  --textColor:#141414;
+}
+
+#toolbox {display: none;}
+.statusBar {background-color: rgba(0,0,0,0);}
+#analysisPanelDiv {left:10px; top:auto; bottom: 20px; ;}
+.LoginTitleDiv {position:absolute; right:0px;left:auto; top: 5px; bottom:auto; }
+.button1 {position:absolute; left:3px; top: 50px;}
+.button2 {position:absolute; left:3px; top: 100px;}

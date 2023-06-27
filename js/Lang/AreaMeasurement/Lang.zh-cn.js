@@ -1,0 +1,42 @@
+SGLang.lang = $.extend(SGLang.lang,{
+    ToolTitle: "SkylineGlobe - Skyline 软件公司",
+    ToolName: "面积测量",
+    help: "帮助",
+    Text0: "取消",
+    Text1: "删除最后点位",
+    Text2: "投影面积",
+    Text3: "多边形面积",
+    Text4: "地表面积",
+    Text5: "采样间隔:",
+	Text6: "创建测量对象",
+	Text7: "捕捉",
+	Text19: "",
+	Text17: "单位",
+	Text18: " 米",
+	Text19: "删除测量.", 
+	Text20: "删除最后测量点.",
+	Text21: "将测量点捕捉到边、对象和顶点.",
+	Text22: "计算所选内容在地形上的水平投影面积.",
+	Text23: "计算任意平面上的面积。多边形的方向由选定的前三个点确定.",
+	Text24: "计算选定区域的地表面积，将地形等高线考虑在内.",
+	Text27: "计算",
+	Text28: "表面积",
+
+	Text_Area:"面积",
+	Text_Perimeter:"周长",
+	Text_squareMeter:"平方米",
+	Text_squareKm:"平方公里",
+	Text_squareFt:"平方英里",
+	Text_squareMi:"平方英里",
+	Text_in: "英寸",
+	Text_ft: "英尺",
+	Text_mile: "英里",
+	Text_mm: "毫米",
+	Text_cm: "厘米",
+	Text_meter: "米",
+	Text_km: "公里",
+
+
+
+    Text999: ""
+});

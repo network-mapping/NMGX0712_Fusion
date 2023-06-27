@@ -1,0 +1,62 @@
+
+#toolbar {
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.toolbar-categories {
+    margin-left: 100px;
+    float: left;
+    width: 100%;
+    background-color: #000000;
+    border-bottom: 5px solid #8dc75a;
+}
+
+.toolbar-section { 
+    height: 82px;
+    padding-left: 10px;
+    padding-right: 10px;
+    float: left;
+    border-right: 2px solid #8dc75a;
+}
+
+.toolbar-button-inactive,
+.toolbar-button-active {
+    color: #ffffff;
+    background: #000000;
+    border-radius: 5px;
+    float: left;
+    margin: 7px 0px 2px 5px;
+    padding: 0px 10px 2px 10px;
+    text-align: center;
+    font-size: 11px;
+}
+
+.toolbar-button-inactive {
+    border: 1px solid #444444;
+}
+.toolbar-button-inactive:hover {
+    cursor: pointer;
+    background-color: #8dc75a;
+    border: 1px solid #ffffff!important;
+}
+
+.toolbar-button-active {
+    background-color: #000000!important;
+    border: 1px solid #8dc75a;
+}
+.toolbar-button-active:hover {
+    cursor: pointer;
+    border: 1px solid #ffffff
+}
+
+.title {
+    color: #ffffff;
+    text-align: center;
+}
+
+.toolbar-section-title {
+    color: #8dc75a;
+    text-align: center;
+}
